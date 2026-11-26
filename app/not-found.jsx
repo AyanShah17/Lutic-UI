@@ -1,0 +1,1 @@
+import Link from "next/link";export default function NotFound(){return <section className="wrap pg"><h1>Page not found.</h1><p className="lead">The page may have moved.</p><p style={{marginTop:24}}><Link className="btn" href="/">Return home</Link></p></section>}

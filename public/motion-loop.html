@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Lutic Motion Loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--page:#e4e2de;--ink:#101012;--mut:#6b6b73;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root{--page:#151517;--ink:#f4f4f2;--mut:#9a9aa3}}:root:not([data-theme=light])body{background:var(--page)}
+html,body{height:100%;margin:0}body{background:var(--page);font:500 15px Geist,system-ui,sans-serif;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;overflow:hidden}
+#box{position:relative}#stage{width:1440px;height:1440px;background:#ebe9e5;overflow:hidden;position:absolute;left:0;top:0;transform-origin:0 0;border-radius:28px}
+#world{position:absolute;inset:0;transform-origin:50% 50%}
+#shape{position:absolute;left:50%;top:50%;overflow:hidden;box-shadow:0 30px 60px rgba(16,16,18,.14)}
+.k{position:absolute;inset:0;color:#fff;font-family:Geist,system-ui,sans-serif}.k *{box-sizing:border-box}
+.c,.l{position:absolute;left:50%;top:50%;white-space:nowrap}.c{transform:translate(-50%,-50%)}.l{transform:translateY(-50%)}
+#ind{position:absolute;left:50%;top:50%;margin-top:-44px;height:88px;border-radius:44px}
+#cur{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-4px 0 0 -4px;transform-origin:4px 4px}
+.ctl{display:flex;gap:14px;align-items:center;width:min(720px,92vw)}.ctl button{font:inherit;background:var(--ink);color:var(--page);border:0;border-radius:99px;padding:9px 18px;cursor:pointer}
+.ctl input{flex:1;accent-color:#ee5414}.ctl span{color:var(--mut);min-width:96px;text-align:right}
+</style></head><body>
+<div id="box"><div id="stage"><div id="world"><div id="shape">
+<div class="k" data-i="0"><span class="c" style="font-size:40px">Run agent</span></div>
+<div class="k" data-i="1"><svg id="ld" class="c" width="76" height="76" viewBox="-38 -38 76 76" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"><circle r="26" stroke-opacity=".2"/><path d="M0 -26A26 26 0 0 1 26 0"/></svg></div>
+<div class="k" data-i="2"><svg class="c" width="90" height="90" viewBox="-30 -30 60 60" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path id="ck" d="M-17 1L-5 13L18 -12" pathLength="1" stroke-dasharray="1"/></svg></div>
+<div class="k" data-i="3"><div class="c" style="margin-left:-185px" id="lg1"></div><span class="l" style="margin-left:-120px;font-size:28px">Alarm F-214</span><div class="c" id="bars" style="margin-left:170px;display:flex;gap:6px;align-items:center;height:44px"><i></i><i></i><i></i><i></i></div></div>
+<div class="k" data-i="4"><div class="c" style="margin-left:-230px;width:220px;height:220px;border-radius:38px;background:#f1efe9;display:grid;place-items:center" id="lg2"></div>
+<span class="l" style="margin:-84px 0 0 -90px;font-size:34px">Shift briefing</span><span class="l" style="margin:-44px 0 0 -90px;font-size:22px;color:#8d8d95">Detroit · Line 2</span>
+<div id="pb" class="c" style="margin:-66px 0 0 292px;width:76px;height:76px;border-radius:50%;background:#fff"><svg class="c" width="38" height="38" viewBox="0 0 24 24" fill="#101012"><polygon id="pl"/><polygon id="pr"/></svg></div>
+<div class="l" style="margin:30px 0 0 -90px;width:420px;height:10px;border-radius:5px;background:#2f2f35"><div id="pf" style="height:100%;border-radius:5px;background:#fff"></div><div id="pt" style="position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff"></div></div>
+<div class="l" style="margin:68px 0 0 -90px;width:420px;display:flex;justify-content:space-between;font-size:18px;color:#8d8d95"><span id="t1"></span><span>3:32</span></div></div>
+<div class="k" data-i="5"><svg class="c" style="margin-left:-300px" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#101012" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/><path id="w1" d="M0 0"/><path id="w2" d="M0 0"/></svg>
+<div id="vt" class="l" style="margin-left:-240px;height:44px;border-radius:22px;background:#e4e2dd;overflow:hidden"><div id="vf" style="height:100%;background:#101012"></div></div></div>
+<div id="ind"></div>
+<div class="k" data-i="7" style="color:#101012"><span class="c lb" style="margin-left:-224px;font-size:28px">Board</span><span class="c lb" style="font-size:28px">Dashboard</span><span class="c lb" style="margin-left:224px;font-size:28px">Alarms</span></div>
+<div class="k" data-i="8" style="color:#101012"><span class="l" style="margin:-225px 0 0 -390px;font-size:30px">OEE · Line 2</span><span class="l" style="margin:-190px 0 0 -390px;font-size:20px;color:#8d8d95">Last 7 days · governed metric</span><span class="l" style="margin:-212px 0 0 230px;font-size:56px;letter-spacing:-.03em">86.4%</span>
+<svg class="c" style="margin-top:60px" width="780" height="300" viewBox="-6 -10 792 312" fill="none"><g stroke="#e8e6e1" stroke-width="2"><path d="M0 0H780M0 150H780M0 300H780"/></g><path id="cp" pathLength="1" stroke="#101012" stroke-width="6" stroke-linecap="round" stroke-dasharray="1"/><g id="dots" fill="#ee5414"></g></svg>
+<div id="tip" class="c" style="margin:-32px 0 0 130px;background:#101012;color:#fff;font-size:20px;padding:10px 16px;border-radius:14px">Thu · 88.1%</div></div>
+<div class="k" data-i="9"><span class="l" style="margin:-136px 0 0 -340px;background:#26262b;color:#cfcfd6;padding:6px 12px;border-radius:10px;font-size:20px">⌘K</span><span id="ty" class="l" style="margin:-136px 0 0 -250px;font-size:30px"></span><div class="c" style="margin-top:-96px;width:700px;height:2px;background:#2b2b31"></div>
+<div id="hl" class="c" style="width:700px;height:56px;border-radius:16px;background:#fff;margin-top:-48px"><span id="en" style="position:absolute;right:22px;top:14px;color:#8d8d95;font-size:22px">↵</span></div><div id="rows"></div></div>
+<div class="k" data-i="10"><div class="c" style="margin-left:-235px" id="lg3"></div><span class="l" style="margin-left:-190px;font-size:30px">LUT-103 is now in progress</span></div>
+<div class="k" data-i="11"><span class="c" style="font-size:40px">Run agent</span></div>
+</div><svg id="cur" viewBox="0 0 44 44"><path d="M4 4L4 32L12 25L18 38L24 35L18 23L29 23Z" fill="#fff" stroke="#101012" stroke-width="2.5" stroke-linejoin="round"/></svg></div></div></div>
+<div class="ctl"><button id="pp">Pause</button><input id="rg" type="range" min="0" max="14" step=".01" value="0" aria-label="Timeline"><span id="rd"></span></div>
+<script>
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),eo=x=>1-Math.pow(1-cl(x),3),$=s=>document.querySelector(s),bump=(t,a)=>t<a||t>a+.3?0:Math.sin(Math.PI*(t-a)/.3);
+const step=(t,w=22,z=.78)=>{if(t<=0)return 0;const d=w*Math.sqrt(1-z*z),e=Math.exp(-z*w*t);return 1-e*(Math.cos(d*t)+z*w/d*Math.sin(d*t))};
+const V=(K,t,w=20,z=.8)=>{const v=K[0][1].slice();for(let i=1;i<K.length;i++){const s=step(t-K[i][0],w,z);for(let j=0;j<v.length;j++)v[j]+=(K[i][1][j]-K[i-1][1][j])*s}return v};
+const SK=[[0,[360,120,60,17,17,17]],[.5,[120,120,60,17,17,17]],[1.5,[120,120,60,238,84,20]],[2.5,[440,96,48,17,17,17]],[3,[760,300,56,17,17,17]],[5,[720,110,55,255,255,255]],[6.5,[220,120,60,207,205,200]],[7,[220,120,60,17,17,17]],[7.5,[720,110,55,255,255,255]],[8.5,[900,560,48,255,255,255]],[10.75,[760,360,40,17,17,17]],[12,[600,110,55,17,17,17]],[13,[360,120,60,17,17,17]]];
+const ZK=[[0,[1.55]],[.5,[2.3]],[1.5,[2.3]],[2.5,[1.9]],[3,[1.45]],[5,[1.5]],[6.5,[2.2]],[7.5,[1.45]],[8.5,[1.15]],[10.75,[1.35]],[12,[1.7]],[13,[1.55]]];
+const CK=[[0,[330,190]],[0,[26,14]],[1.6,[120,60]],[3,[292,-66]],[3.6,[36,30]],[4.1,[238,30]],[4.8,[330,120]],[5.1,[-24,0]],[5.6,[390,0]],[6.3,[30,0]],[7.6,[0,6]],[8.6,[260,250]],[9.55,[130,24]],[10.5,[330,170]],[12.1,[300,60]],[12.9,[330,190]]];
+const PR=[[.5,.62],[3.5,3.62],[4,4.75],[5.5,6.25],[7,7.12],[8,8.12]],ST=[0,.5,1.5,2.5,3,5,6.5,7.5,8.5,10.75,12,13];
+const cur=t=>V(CK,t,15,.9),op=(i,t)=>{const a=ST[i],b=i<11?ST[i+1]:99;return(i==0?1:eo((t-a-.1)/.18))*(i==11?1:1-eo((t-b+.02)/.12))};
+const lg=s=>{const p=[0,1,2,3,4,5].map(i=>(100+60*Math.cos((20+60*i)*Math.PI/180)).toFixed(1)+','+(100+60*Math.sin((20+60*i)*Math.PI/180)).toFixed(1)).join(' ');return`<svg width="${s}" height="${s}" viewBox="20 20 160 160"><polygon points="${p}" fill="#ee5414" stroke="#ee5414" stroke-width="34" stroke-linejoin="round"/><circle cx="100" cy="100" r="52" fill="#101012"/><ellipse cx="82" cy="106" rx="6.5" ry="8.5" fill="#fff"/><ellipse cx="118" cy="97" rx="6.5" ry="8.5" fill="#fff"/></svg>`};
+$('#lg1').innerHTML=lg(52);$('#lg2').innerHTML=lg(170);$('#lg3').innerHTML=lg(60);
+const D=[.28,.46,.38,.7,.62,.92,.8],P=D.map((d,i)=>[i*130,300*(1-d)]);
+$('#cp').setAttribute('d',P.map((p,i)=>{if(!i)return`M${p[0]} ${p[1]}`;const a=P[Math.max(0,i-2)],b=P[i-1],e=P[Math.min(6,i+1)];return`C${b[0]+(p[0]-a[0])/6} ${b[1]+(p[1]-a[1])/6} ${p[0]-(e[0]-b[0])/6} ${p[1]-(e[1]-b[1])/6} ${p[0]} ${p[1]}`}).join(''));
+$('#dots').innerHTML=P.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="0"/>`).join('');
+const IT=['Search manuals','Open alarms','LUT-103 Replace press 4 seal','LUT-108 Calibrate sensor'],RK=[[0,0,0,0],[1,1,1,1],[2,2,0,0],[3,3,1,1]],OP=[[1,1,0,0],[1,1,0,0],[1,1,1,1],[1,1,1,1]];
+$('#rows').innerHTML=IT.map(x=>`<div class="c" style="width:700px;padding-left:24px;font-size:24px;line-height:56px">${x}</div>`).join('');
+const rows=[...$('#rows').children],bars=[...$('#bars').children];bars.forEach(b=>b.style.cssText='width:6px;border-radius:3px;background:#fff');
+const KS=[...document.querySelectorAll('.k')],S=$('#shape'),Wd=$('#world'),lbs=[...document.querySelectorAll('.lb')];
+const IK=[[6.5,[-94,-6]],[7,[6,94]],[7.5,[-328,-120]],[8,[-104,104]]];
+const edges=t=>{let a=IK[0][1][0],b=IK[0][1][1];for(let i=1;i<IK.length;i++){const p=IK[i-1][1],q=IK[i][1],r=q[0]+q[1]>p[0]+p[1],u=t-IK[i][0];a+=(q[0]-p[0])*step(u,r?15:34,.62);b+=(q[1]-p[1])*step(u,r?34:15,.62)}return[a,b]};
+const vx=x=>cl((x+240)/540),pg=x=>cl((x+90)/420);
+const prog=t=>t<4?.18+.03*Math.max(0,t-3.5):t<4.75?pg(cur(t)[0]):pg(cur(4.75)[0])+.03*(t-4.75);
+const vol=t=>t<5.5?.4:t<6.25?vx(cur(t)[0]):vx(cur(6.25)[0]);
+const stretch=t=>t<5.5||t>7?0:t<6.25?.45*Math.max(0,cur(t)[0]-300):.45*Math.max(0,cur(6.25)[0]-300)*(1-step(t-6.25,18,.55));
+const mm=(a,b,m)=>a.map((p,i)=>[p[0]+(b[i][0]-p[0])*m,p[1]+(b[i][1]-p[1])*m].join(',')).join(' ');
+const PL=[[6,4],[12,7.5],[12,16.5],[6,20]],PL2=[[6,4],[10,4],[10,20],[6,20]],PR_=[[12,7.5],[18,12],[18,12],[12,16.5]],PR2=[[14,4],[18,4],[18,20],[14,20]];
+function seek(t){t=((t%14)+14)%14;
+ Wd.style.transform=`scale(${V(ZK,t,9,.9)[0]})`;
+ let[w,h,r,R,G,B]=V(SK,t,20,.8);w+=stretch(t);
+ S.style.cssText=`width:${w}px;height:${h}px;border-radius:${r}px;background:rgb(${[R,G,B].map(c=>Math.round(cl(c,0,255)))});transform:translate(-50%,-50%) scale(${1-.05*bump(t,.5)})`;
+ KS.forEach(k=>{const o=op(+k.dataset.i,t);k.style.display=o>.01?'block':'none';k.style.opacity=o;k.style.filter=o<.99?`blur(${(1-o)*10}px)`:'none'});
+ $('#ld').style.transform=`rotate(${t*600}deg)`;$('#ck').style.strokeDashoffset=1-eo((t-1.62)/.4);
+ bars.forEach((b,i)=>b.style.height=(14+22*Math.abs(Math.sin(t*7+i*1.7)))+'px');
+ const p=prog(t),dr=t>=4&&t<4.75,m=step(t-3.5,24,.75);
+ $('#pl').setAttribute('points',mm(PL,PL2,m));$('#pr').setAttribute('points',mm(PR_,PR2,m));$('#pb').style.transform=`translate(-50%,-50%) scale(${1-.1*bump(t,3.5)})`;
+ $('#pf').style.width=p*100+'%';$('#pt').style.left=p*100+'%';$('#pt').style.transform=`scale(${dr?1.3:1})`;const s=Math.floor(p*212);$('#t1').textContent=(s/60|0)+':'+String(s%60).padStart(2,'0');
+ const v=vol(t),st=stretch(t);$('#vt').style.width=540+st*.6+'px';$('#vf').style.width=v*540+'px';$('#w1').style.opacity=v>.15?1:0;$('#w2').style.opacity=v>.55?1:0;
+ const[x0,x1]=edges(t),ic=V([[6.5,[255]],[7.5,[17]]],t,20,.8)[0],iv=cl((t-6.6)/.15)*(1-cl((t-8.45)/.12)),I=$('#ind');
+ I.style.cssText=`margin-left:${x0}px;width:${x1-x0}px;background:rgb(${Math.round(cl(ic,0,255))},${Math.round(cl(ic,0,255))},${Math.round(cl(ic,0,255))});opacity:${iv}`;
+ lbs.forEach((l,i)=>{const c=(i-1)*224,k=cl(1-Math.abs((x0+x1)/2-c)/130),g=Math.round(17+238*k);l.style.color=`rgb(${g},${g},${g})`});
+ const dw=eo((t-8.75)/1);$('#cp').style.strokeDashoffset=1-dw;$('#cp').style.opacity=dw>.005?1:0;[...$('#dots').children].forEach((c,i)=>c.setAttribute('r',8*cl((dw*6-i)/.3)));
+ const tp=cl(step(t-10,26,.7));$('#tip').style.opacity=tp;$('#tip').style.transform=`translate(-50%,-50%) scale(${.8+.2*tp})`;
+ const n=t<11?0:Math.min(3,Math.floor((t-11)/.17)+1);$('#ty').textContent='lut'.slice(0,n)+(Math.floor(t*2)%2?'':'|');
+ rows.forEach((e,i)=>{const rk=V(RK[i].map((x,j)=>[[0,11,11.17,11.34][j],[x]]),t,24,.8)[0],o=V(OP[i].map((x,j)=>[[0,11,11.17,11.34][j],[x]]),t,30,.98)[0],g=Math.round(255-238*cl(1-rk));
+  e.style.marginTop=(-48+rk*64)+'px';e.style.opacity=cl(o);e.style.color=`rgb(${g},${g},${g})`});
+ $('#hl').style.transform=`translate(-50%,-50%) scale(${1-.04*bump(t,11.75)})`;
+ const c=cur(t),pr=1-.2*Math.max(...PR.map(([a,b])=>cl((t-a)/.06)*(1-cl((t-b)/.08))));$('#cur').style.transform=`translate(${c[0]}px,${c[1]}px) scale(${pr})`;
+ $('#rd').textContent='Bar '+(1+Math.floor(t/2))+' · beat '+(1+Math.floor(t/.5)%4);$('#rg').value=t}
+function fit(){const s=Math.min(innerWidth*.96,innerHeight-90)/1440;$('#stage').style.transform=`scale(${s})`;$('#box').style.cssText=`width:${1440*s}px;height:${1440*s}px`}
+addEventListener('resize',fit);fit();
+let play=!matchMedia('(prefers-reduced-motion:reduce)').matches,T=0,L=performance.now();
+$('#pp').textContent=play?'Pause':'Play';
+$('#pp').onclick=()=>{play=!play;$('#pp').textContent=play?'Pause':'Play'};$('#rg').oninput=e=>{play=false;$('#pp').textContent='Play';T=+e.target.value;seek(T)};
+(function f(n){if(play)T=(T+(n-L)/1000)%14;L=n;seek(T);requestAnimationFrame(f)})(L);
+</script></body></html>
