@@ -149,7 +149,7 @@ nav .btn{white-space:nowrap}
 @media(max-width:900px){.seo-capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.seo-capability-grid{grid-template-columns:1fr}.seo-overview{padding-top:48px}}
 
-/* LUTIC — minimal 4.5-second wordmark → mascot → homepage introduction.
+/* LUTIC — 4.5-second kinetic wordmark → mascot → shōji-inspired gate opening.
    All underlying homepage content remains server-rendered. */
 html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-behavior:none}
 .lutic-intro-active [data-lutic-hero-mascot] svg{visibility:hidden;animation:none!important;transform:none!important;transition:none!important}
@@ -157,39 +157,59 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .lutic-intro{position:fixed;inset:0;width:100%;height:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:var(--ink);overflow:hidden;isolation:isolate;--handoff-x:0px;--handoff-y:0px;--handoff-scale:1}
 .lutic-intro:not([open]){display:none}
 .lutic-intro::backdrop{background:transparent}
-.lutic-intro-backdrop{position:absolute;inset:0;background:var(--bg);z-index:-1}
-.lutic-intro-wordmark{position:absolute;left:50%;top:50%;font-size:clamp(88px,18vw,200px);font-weight:600;letter-spacing:-.085em;line-height:.94;color:var(--ink);white-space:nowrap;transform:translate(-50%,-50%);transform-origin:center;pointer-events:none}
-.lutic-intro-logo-anchor{position:absolute;top:50%;left:50%;width:clamp(132px,22vw,208px);max-width:42vh;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
+.lutic-intro-gate{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.lutic-intro-gate-panel{position:absolute;top:0;bottom:0;width:calc(50% + 1px);background:var(--bg);will-change:transform}
+.lutic-intro-gate-left{left:0;transform-origin:left center}
+.lutic-intro-gate-right{right:0;transform-origin:right center}
+.lutic-intro-gate-panel::after{content:"";position:absolute;top:0;bottom:0;width:1px;background:var(--or);opacity:0}
+.lutic-intro-gate-left::after{right:0}
+.lutic-intro-gate-right::after{left:0}
+.lutic-intro-wordmark{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.lutic-intro-type{display:flex;align-items:baseline;justify-content:center;white-space:nowrap;font-family:Geist,"Helvetica Neue",Arial,sans-serif;font-size:clamp(86px,22vw,260px);font-weight:720;font-variation-settings:"wght" 720;letter-spacing:-.092em;line-height:1.08;color:var(--ink);transform-origin:center}
+.lutic-intro-letter{display:inline-block;transform-origin:center bottom}
+.lutic-intro-letter:last-child{padding-right:.092em}
+.lutic-intro-logo-anchor{position:absolute;z-index:2;top:50%;left:50%;width:clamp(132px,22vw,208px);max-width:42vh;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
 .lutic-intro-logo-travel,.lutic-intro-logo-follow,.lutic-intro-logo-art{width:100%;height:100%;transform-origin:center}
 .lutic-intro-logo-art{opacity:0}
 .lutic-intro-logo-art svg{display:block;width:100%;height:100%;filter:drop-shadow(0 14px 22px rgba(238,84,20,.18))}
-.lutic-intro.is-playing .lutic-intro-wordmark{animation:lutic-wordmark-morph 4.5s cubic-bezier(.22,.75,.2,1) both}
+.lutic-intro.is-playing .lutic-intro-type{animation:lutic-wordmark-morph 4.5s cubic-bezier(.22,.75,.2,1) both}
+.lutic-intro.is-playing .lutic-intro-letter{animation:lutic-letter-in .48s cubic-bezier(.2,.7,.2,1) var(--letter-delay) both}
+.lutic-intro.is-playing .lutic-intro-gate-left{animation:lutic-gate-left 4.5s cubic-bezier(.76,0,.24,1) both}
+.lutic-intro.is-playing .lutic-intro-gate-right{animation:lutic-gate-right 4.5s cubic-bezier(.76,0,.24,1) both}
+.lutic-intro.is-playing .lutic-intro-gate-panel::after{animation:lutic-gate-edge 4.5s linear both}
 .lutic-intro.is-playing .lutic-intro-logo-art{animation:lutic-logo-morph 4.5s cubic-bezier(.22,.75,.2,1) both}
-.lutic-intro.is-playing .lutic-intro-backdrop{animation:lutic-intro-reveal 4.5s linear both}
 .lutic-intro.is-playing .lutic-intro-logo-travel{animation:lutic-intro-travel 4.5s cubic-bezier(.22,.75,.2,1) both}
 .lutic-intro.is-playing[data-matched="false"] .lutic-intro-logo-travel{animation:lutic-intro-fade 4.5s linear both}
 .lutic-intro.is-playing .lutic-intro-logo-art svg ellipse{animation:lutic-intro-blink 4.5s ease-in-out both;transform-box:fill-box;transform-origin:center}
-/* Letter spacing contracts and the wordmark collapses into the center as the logo expands from the same point. */
+/* Kinetic letterforms settle, compress, and resolve into the original mascot. */
+@keyframes lutic-letter-in{
+ 0%{opacity:0;transform:translateY(.24em) scaleY(.88)}
+ 100%{opacity:1;transform:translateY(0) scaleY(1)}
+}
 @keyframes lutic-wordmark-morph{
- 0%{opacity:1;transform:translate(-50%,-50%) scale(.94);letter-spacing:-.055em;filter:blur(0)}
- 9%,24%{opacity:1;transform:translate(-50%,-50%) scale(1);letter-spacing:-.085em;filter:blur(0)}
- 34%{opacity:.85;transform:translate(-50%,-50%) scale(.58,.82);letter-spacing:-.12em;filter:blur(1px);color:var(--or)}
- 43%,100%{opacity:0;transform:translate(-50%,-50%) scale(.22,.4);letter-spacing:-.15em;filter:blur(8px);color:var(--or)}
+ 0%{opacity:1;transform:scale(.94);font-variation-settings:"wght" 540;letter-spacing:-.055em}
+ 16%,24%{opacity:1;transform:scale(1);font-variation-settings:"wght" 720;letter-spacing:-.092em}
+ 34%{opacity:.82;transform:scale(.5,.82);font-variation-settings:"wght" 800;letter-spacing:-.12em;color:var(--or)}
+ 43%,100%{opacity:0;transform:scale(.16,.38);font-variation-settings:"wght" 800;letter-spacing:-.14em;color:var(--or)}
 }
 @keyframes lutic-logo-morph{
- 0%,26%{opacity:0;transform:scale(.22) rotate(-18deg);filter:blur(6px)}
- 39%{opacity:1;transform:scale(.88) rotate(-8deg);filter:blur(0)}
- 48%{opacity:1;transform:scale(1.055) rotate(2deg);filter:blur(0)}
- 58%,100%{opacity:1;transform:scale(1) rotate(0);filter:blur(0)}
+ 0%,26%{opacity:0;transform:scale(.22) rotate(-12deg)}
+ 39%{opacity:1;transform:scale(.88) rotate(-5deg)}
+ 48%{opacity:1;transform:scale(1.035) rotate(1deg)}
+ 58%,100%{opacity:1;transform:scale(1) rotate(0)}
 }
 @keyframes lutic-intro-blink{
  0%,40%{transform:scaleY(1)}
  42%{transform:scaleY(.12)}
  45%,100%{transform:scaleY(1)}
 }
-@keyframes lutic-intro-reveal{0%,80%{opacity:1}100%{opacity:0}}
-@keyframes lutic-intro-travel{0%,80%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--handoff-x),var(--handoff-y)) scale(var(--handoff-scale))}}
-@keyframes lutic-intro-fade{0%,80%{opacity:1}100%{opacity:0}}
+/* Two opaque sliding doors reveal the already-rendered homepage from its center seam. */
+@keyframes lutic-gate-left{0%,76%{transform:translate3d(0,0,0)}100%{transform:translate3d(-101%,0,0)}}
+@keyframes lutic-gate-right{0%,76%{transform:translate3d(0,0,0)}100%{transform:translate3d(101%,0,0)}}
+@keyframes lutic-gate-edge{0%,75%{opacity:0}79%{opacity:.55}96%,100%{opacity:0}}
+/* The logo is above both doors and moves concurrently to the measured hero rectangle. */
+@keyframes lutic-intro-travel{0%,76%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--handoff-x),var(--handoff-y)) scale(var(--handoff-scale))}}
+@keyframes lutic-intro-fade{0%,76%{opacity:1}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.lutic-intro{display:none!important}}
 
 /* The intro itself is the entrance; never restart the original hero keyframes after handoff. */

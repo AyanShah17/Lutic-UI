@@ -1,13 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {INTRO_DURATION,INTRO_HANDOFF,INTRO_RECENTER,INTRO_PHASES,shouldPlayIntro,handoffGeometry,cursorPose} from "../lib/intro.mjs";
+import {INTRO_DURATION,INTRO_HANDOFF,INTRO_RECENTER,INTRO_GATE_OPEN,INTRO_PHASES,shouldPlayIntro,handoffGeometry,cursorPose} from "../lib/intro.mjs";
 
 test("wordmark, mascot and homepage fit into the 4.5-second sequence",()=>{
  assert.equal(INTRO_DURATION,4500);
- assert.equal(INTRO_HANDOFF,3600);
- assert.equal(INTRO_RECENTER,3350);
+ assert.equal(INTRO_HANDOFF,3420);
+ assert.equal(INTRO_RECENTER,3150);
+ assert.equal(INTRO_GATE_OPEN,INTRO_HANDOFF);
  assert.ok(INTRO_RECENTER<INTRO_HANDOFF&&INTRO_HANDOFF<INTRO_DURATION);
- assert.deepEqual(INTRO_PHASES.map(p=>[p.start,p.label]),[[0,"Wordmark"],[1170,"Mascot"],[3600,"Homepage"]]);
+ assert.deepEqual(INTRO_PHASES.map(p=>[p.start,p.label]),[[0,"Wordmark"],[1170,"Mascot"],[3420,"Gate opening"]]);
 });
 test("fresh homepage and homepage reload play; ordinary repeat visits bypass",()=>{
  assert.equal(shouldPlayIntro(),true);

@@ -62,7 +62,7 @@ Social preview routes: `/og/home`, `/og/solutions`, `/og/platform`, `/og/agents`
 
 ## Homepage welcome animation
 
-The homepage opens with a centered Lutic wordmark that contracts into the mascot with a coordinated scale/opacity transition. The mascot reacts to pointer movement, then moves and scales to the actual homepage hero during the final 0.9 seconds of the 4.5-second introduction. The network graphics and auxiliary labels have been removed. This uses native React/SVG/CSS rather than a video and does not navigate away from the canonical homepage.
+The homepage opens with oversized kinetic Geist variable-font lettering, staggered letter entrances and a coordinated weight/scale transition into the original Lutic mascot. At 3.42 seconds, two shōji-inspired full-height panels slide apart horizontally, revealing the actual server-rendered homepage. The mascot travels above the panels and matches the measured hero position while the doors open. Total duration remains 4.5 seconds. If the hero mascot is offscreen, the doors still open and the intro mascot fades instead. No network graphics, auxiliary labels, videos or extra animation dependencies are used.
 
 The intro plays on the first homepage visit in a tab and again on each full homepage reload, including after scrolling. Ordinary in-app navigation back to the homepage does not replay it once seen. The visible timeline and skip control are removed for a clean presentation; Escape still dismisses it for keyboard accessibility. The mascot gently follows mouse or pen movement with both its body and eyes, then recenters for the homepage handoff. Reduced-motion preferences, deep links, unsupported dialogs and JavaScript-disabled browsing bypass the intro. The underlying homepage remains server-rendered with the same metadata and route. No media download, external animation library or new dependency is required.
 
@@ -72,4 +72,4 @@ npm run test:seo
 npm run build
 ```
 
-Browser acceptance checks: fresh tab, full 4.5-second wordmark-to-mascot-to-homepage playback, mouse/pen tracking, Escape dismissal, no bottom timeline or skip button, homepage reload at top and after scrolling, no orange heading focus box, repeat in-app navigation, mobile portrait and landscape, dark mode, reduced motion, and direct access to interior routes. Visual handoff and actual build should be checked in a browser/deployment.
+Browser acceptance checks: fresh tab, full 4.5-second kinetic wordmark-to-mascot-to-gate playback, mouse/pen tracking, Escape dismissal, no bottom timeline or skip button, homepage reload at top and after scrolling, no orange heading focus box, repeat in-app navigation, mobile portrait and landscape, dark mode, reduced motion, and direct access to interior routes. Visual handoff and actual build should be checked in a browser/deployment.

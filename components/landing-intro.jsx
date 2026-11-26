@@ -103,8 +103,8 @@ export default function LandingIntro(){
   return ()=>{finished=true;cleanup();};
  },[]);
  return <dialog ref={dialogRef} className="lutic-intro" aria-label="Lutic welcome animation. Press Escape to continue to the homepage.">
-  <div className="lutic-intro-backdrop" aria-hidden="true"/>
-  <div className="lutic-intro-wordmark" aria-hidden="true">Lutic</div>
+  <div className="lutic-intro-gate" aria-hidden="true"><div className="lutic-intro-gate-panel lutic-intro-gate-left"/><div className="lutic-intro-gate-panel lutic-intro-gate-right"/></div>
+  <div className="lutic-intro-wordmark" aria-hidden="true"><div className="lutic-intro-type">{"Lutic".split("").map((letter,i)=><span className="lutic-intro-letter" key={i} style={{"--letter-delay":(i*45)+"ms"}}>{letter}</span>)}</div></div>
   <div className="lutic-intro-logo-anchor" ref={logoRef} aria-hidden="true"><div className="lutic-intro-logo-travel"><div className="lutic-intro-logo-follow" ref={followRef}><div className="lutic-intro-logo-art"><Logo/></div></div></div></div>
  </dialog>;
 }
