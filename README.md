@@ -75,3 +75,7 @@ npm run build
 Browser acceptance checks: fresh tab, full 4.5-second kinetic wordmark-to-mascot-to-gate playback, mouse/pen tracking, Escape dismissal, no bottom timeline or skip button, homepage reload at top and after scrolling, no orange heading focus box, repeat in-app navigation, mobile portrait and landscape, dark mode, reduced motion, and direct access to interior routes. Visual handoff and actual build should be checked in a browser/deployment.
 
 The six services use a three-column responsive grid (two on tablet, one on mobile), with every title and description visible and hover/focus highlighting rather than width-changing cards.
+
+## Branded search and content SEO
+
+Production has 13 canonical routes, including dedicated agentic automation, AI integration and AI support pages, About Lutic and an Insights hub with two practical engineering guides. Existing routes and the intro are preserved. Keep SITE_URL=https://lutic.app and SEO_NOINDEX=0 in Vercel production. Preview deployments remain noindex. Submit the updated sitemap and inspect the homepage/new URLs in Search Console after deploying. Use verified official profile URLs only when adding sameAs; do not invent customer testimonials, office addresses or regional pages. Google chooses indexing and ranking; no code guarantees first position.

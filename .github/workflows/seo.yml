@@ -1,0 +1,24 @@
+name: SEO and build validation
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://lutic.app
+      SEO_NOINDEX: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --no-audit --no-fund
+      - run: npm run test:seo && npm run test:intro
+      - run: npm run build
+      - name: Check built routes, sitemap, robots and metadata
+        run: |
+          npm run start -- --port 3000 &
+          for i in $(seq 1 40); do curl -fsS http://localhost:3000/ >/dev/null && break; sleep 1; done
+          npm run check:seo -- http://localhost:3000

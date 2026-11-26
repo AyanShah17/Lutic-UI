@@ -4,7 +4,7 @@ import Footer from "@/components/footer";
 import {site} from "@/lib/seo.mjs";
 export const metadata={
  ...(site.origin?{metadataBase:new URL(site.origin)}:{}),
- title:{default:"Lutic | AI Solutions & Agentic Automation",template:"%s | Lutic"},
+ title:{default:"Lutic | Independent AI Studio & Agentic Automation",template:"%s | Lutic"},
  description:"Custom AI solutions, agentic automation, integrations and production consulting.",
  applicationName:"Lutic",
  ...(process.env.GOOGLE_SITE_VERIFICATION?{verification:{google:process.env.GOOGLE_SITE_VERIFICATION}}:{}),

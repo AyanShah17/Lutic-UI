@@ -15,6 +15,7 @@ for(const [key,p] of Object.entries(pages)){
  else{
   assert.equal(attr(find("rel","canonical"),"href"),expected+p.path);
   assert.doesNotMatch(meta("name","robots")||"",/noindex/i);
+  assert.doesNotMatch(r.headers.get("x-robots-tag")||"",/noindex/i);
   assert.match(html,/application\/ld\+json/);
  }
  const og=await get("/og/"+key);assert.match(og.headers.get("content-type")||"",/image\/png/);

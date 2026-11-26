@@ -212,3 +212,23 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 
 /* Identical final mascot artwork; keep shadow proportional to the matched SVG size. */
 .lutic-intro-logo-art svg{filter:drop-shadow(0 19px 19px rgba(238,84,20,.25))}
+
+/* Editorial pages share the existing Lutic visual system; content is visible without JS. */
+.seo-content{padding:0 0 60px}
+.seo-reading{max-width:920px}
+.seo-kicker{display:block;color:var(--or);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.seo-byline{font-size:14px;color:var(--mut);margin-top:20px}
+.seo-section{padding:32px 0;border-top:1px solid var(--line)}
+.seo-section h2{font-size:clamp(26px,3vw,40px);margin-bottom:20px}
+.seo-section p,.seo-section li{font-size:17px;line-height:1.7;margin-bottom:14px;color:var(--mut)}
+.seo-section ul{padding-left:24px;list-style:disc}
+.seo-related{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.seo-resource{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:24px;transition:border-color .2s}
+.seo-resource:hover,.seo-resource:focus-visible{border-color:var(--or)}
+.seo-resource strong{font-size:20px}.seo-resource p{font-size:15px;margin:0}.seo-resource span{color:var(--or);font-weight:500;margin-top:auto}
+.seo-links{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0}
+.seo-links a{border:1px solid var(--line);border-radius:999px;padding:10px 16px;background:var(--card)}
+.seo-links a:hover,.seo-inline-link:hover{color:var(--or)}
+.seo-inline-link{font-size:15px;text-decoration:underline;text-underline-offset:4px}
+.seo-home-links{padding-top:50px;padding-bottom:50px}
+@media(max-width:600px){.seo-related{grid-template-columns:1fr}.seo-section{padding:24px 0}}

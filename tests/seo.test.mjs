@@ -10,14 +10,14 @@ test("only configured production is indexable",()=>{
 test("unique page metadata and matching canonical URLs",()=>{
  const titles=new Set(),descriptions=new Set();
  for(const [key,p] of Object.entries(pages)){
-  const m=pageMetadata(key,live);titles.add(m.title);descriptions.add(m.description);
+  const m=pageMetadata(key,live);titles.add(typeof m.title==="string"?m.title:m.title.absolute);descriptions.add(m.description);
   assert.equal(m.alternates.canonical,"https://example.com"+p.path);
   assert.equal(m.openGraph.url,m.alternates.canonical);
   assert.equal(m.openGraph.images[0].url,"https://example.com/og/"+key);
   assert.equal(pageMetadata(key,preview).robots.index,false);
   assert.equal(pageMetadata(key,preview).alternates,undefined);
  }
- assert.equal(titles.size,6);assert.equal(descriptions.size,6);
+ assert.equal(titles.size,Object.keys(pages).length);assert.equal(descriptions.size,Object.keys(pages).length);assert.equal(Object.keys(pages).length,13);
 });
 test("sitemap and robots share canonical origin",()=>{
  assert.deepEqual(sitemapEntries(live).map(x=>x.url),Object.values(pages).map(x=>"https://example.com"+x.path));
@@ -33,4 +33,13 @@ test("structured data matches public page identities",()=>{
   assert.equal(graph.filter(n=>n["@type"]==="Service").length,p.services?.length||0);
   assert.equal(structuredData(key,preview),null);
  }
+});
+
+test("brand-first homepage, editorial pages and service URLs",()=>{
+ assert.equal(pageMetadata("home",live).title.absolute,"Lutic | Independent AI Studio & Agentic Automation");
+ const names=["agentic-automation","ai-integrations","ai-support","about","insights","production-ai-checklist","agentic-workflow-design"];
+ for(const key of names)assert.ok(pages[key]);
+ const graph=structuredData("production-ai-checklist",live)["@graph"];
+ assert.equal(graph.find(n=>n["@type"]==="BreadcrumbList").itemListElement.length,3);
+ assert.equal(graph.find(n=>n["@type"]==="Article").headline,pages["production-ai-checklist"].heading);
 });
