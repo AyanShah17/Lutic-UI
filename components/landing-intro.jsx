@@ -50,10 +50,13 @@ export default function LandingIntro(){
   let finished=false;
   const timers=[];
   const priorFocus=document.activeElement;
-  const hero=()=>document.querySelector("[data-lutic-hero-mascot] svg");
+  const home=document.querySelector("[data-view='home']");
+  const hero=()=>home?.querySelector("[data-lutic-hero-mascot] svg");
   const syncTarget=()=>{
    // The outer anchor is never transformed; only its inner artwork animates.
-   const g=handoffGeometry(logo.getBoundingClientRect(),hero()?.getBoundingClientRect());
+   const target=hero()?.getBoundingClientRect();
+   const visible=target&&target.bottom>0&&target.top<window.innerHeight&&target.right>0&&target.left<window.innerWidth;
+   const g=handoffGeometry(logo.getBoundingClientRect(),visible?target:null);
    dialog.style.setProperty("--handoff-x",g.x+"px");
    dialog.style.setProperty("--handoff-y",g.y+"px");
    dialog.style.setProperty("--handoff-scale",String(g.scale));
@@ -73,6 +76,7 @@ export default function LandingIntro(){
    if(finished)return;
    finished=true;
    try{sessionStorage.setItem(INTRO_STORAGE_KEY,"1");}catch{}
+   home?.classList.add("lutic-intro-complete");
    cleanup();
    // Do not send focus to the document body or make keyboard users start over.
    if(priorFocus&&priorFocus!==document.body&&priorFocus.isConnected)priorFocus.focus({preventScroll:true});

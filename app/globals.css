@@ -218,3 +218,6 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @media(max-width:600px){.lutic-intro-brand{left:20px;top:max(22px,env(safe-area-inset-top))}.lutic-intro-skip{right:20px;top:max(22px,env(safe-area-inset-top))}.lutic-intro-stage{width:min(92vw,73vh)}.lutic-intro-logo-anchor{width:min(23vw,18.25vh)}.lutic-intro-caption{bottom:max(30px,calc(env(safe-area-inset-bottom) + 16px))}}
 @media(max-height:480px) and (orientation:landscape){.lutic-intro-stage,.lutic-intro-logo-anchor{top:44%}.lutic-intro-caption{bottom:10px}.lutic-intro-caption-copy strong{font-size:23px}.lutic-intro-caption-copy p{min-height:0}.lutic-intro-progress{margin-top:6px}}
 @media(prefers-reduced-motion:reduce){.lutic-intro{display:none!important}}
+
+/* The intro itself is the entrance; never restart the original hero keyframes after handoff. */
+.lutic-intro-complete .hero h1,.lutic-intro-complete .hero .lead,.lutic-intro-complete .hero .row,.lutic-intro-complete [data-lutic-hero-mascot] svg{animation:none}
