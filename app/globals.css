@@ -148,3 +148,73 @@ nav .btn{white-space:nowrap}
 [id]{scroll-margin-top:100px}
 @media(max-width:900px){.seo-capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.seo-capability-grid{grid-template-columns:1fr}.seo-overview{padding-top:48px}}
+
+/* LUTIC — 10-second welcome sequence. The real homepage remains server-rendered.
+   0–2 awaken | 2–4.5 connect | 4.5–7.5 execute | 7.5–10 return / handoff. */
+html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-behavior:none}
+.lutic-intro-active [data-lutic-hero-mascot] svg{visibility:hidden;animation:none!important;transform:none!important;transition:none!important}
+.lutic-intro-active .hero h1,.lutic-intro-active .hero .lead,.lutic-intro-active .hero .row{animation:none}
+.lutic-intro{position:fixed;inset:0;width:100%;height:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:var(--ink);overflow:hidden;isolation:isolate;--handoff-x:0px;--handoff-y:0px;--handoff-scale:1}
+.lutic-intro:not([open]){display:none}
+.lutic-intro::backdrop{background:transparent}
+.lutic-intro-backdrop{position:absolute;inset:0;background:var(--bg);z-index:-1}
+.lutic-intro-brand{position:absolute;top:max(28px,env(safe-area-inset-top));left:max(30px,env(safe-area-inset-left));display:grid;gap:2px;font-size:12px;color:var(--mut)}
+.lutic-intro-wordmark{font-size:30px;font-weight:600;letter-spacing:-.07em;color:var(--ink);line-height:1}
+.lutic-intro-wordmark span{color:var(--or)}
+.lutic-intro-skip{position:absolute;z-index:5;top:max(26px,env(safe-area-inset-top));right:max(28px,env(safe-area-inset-right));display:flex;gap:14px;align-items:center;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;border-radius:999px;font:500 13px/1.4 Geist,system-ui,sans-serif;cursor:pointer}
+.lutic-intro-skip:hover{border-color:var(--or);color:var(--or)}
+.lutic-intro-stage{position:absolute;left:50%;top:48%;width:min(76vw,580px,75vh);aspect-ratio:600/440;transform:translate(-50%,-50%);pointer-events:none}
+.lutic-intro-network{display:block;width:100%;height:100%;overflow:visible}
+.lutic-intro-logo-anchor{position:absolute;top:48%;left:50%;width:min(22vw,140px,21.7vh);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
+.lutic-intro-logo-travel,.lutic-intro-logo-art{width:100%;height:100%;transform-origin:center}
+.lutic-intro-logo-art svg{display:block;width:100%;height:100%;filter:drop-shadow(0 14px 22px rgba(238,84,20,.18))}
+.lutic-intro-ring,.lutic-intro-ring-outer{stroke:var(--or);stroke-width:1.1;opacity:0;transform-box:fill-box;transform-origin:center}
+.lutic-intro-link{stroke:var(--or);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.lutic-intro-pulse{stroke:var(--or);stroke-width:3;stroke-linecap:round;stroke-dasharray:.13 .87;stroke-dashoffset:1;opacity:0}
+.lutic-intro-node{opacity:0;transform:scale(.65);transform-origin:0 0}
+.lutic-intro-node-fill{fill:var(--bg);stroke:var(--or);stroke-width:1.5}
+.lutic-intro-node-icon,.lutic-intro-node-check{stroke:var(--or);stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.lutic-intro-node-check{stroke:#fff;stroke-width:2.2;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.lutic-intro-caption{position:absolute;left:50%;bottom:max(34px,calc(env(safe-area-inset-bottom) + 18px));width:min(420px,calc(100% - 56px));transform:translateX(-50%);text-align:center}
+.lutic-intro-phase{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:11px;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+.lutic-intro-phase-dot{width:6px;height:6px;border-radius:50%;background:var(--or)}
+.lutic-intro-caption-copy{animation:lutic-caption-in .35s ease-out both}
+.lutic-intro-caption-copy strong{display:block;font-size:clamp(24px,4vw,38px);font-weight:500;letter-spacing:-.045em;line-height:1.2;margin:7px 0 5px}
+.lutic-intro-caption-copy p{font-size:13px;color:var(--mut);min-height:2.7em}
+.lutic-intro-progress{width:100%;height:2px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:13px}
+.lutic-intro-progress span{display:block;width:100%;height:100%;background:var(--or);transform:scaleX(0);transform-origin:left center}
+.lutic-intro.is-playing .lutic-intro-backdrop{animation:lutic-intro-reveal 10s linear both}
+.lutic-intro.is-playing .lutic-intro-brand,.lutic-intro.is-playing .lutic-intro-caption,.lutic-intro.is-playing .lutic-intro-skip{animation:lutic-intro-chrome 10s linear both}
+.lutic-intro.is-playing .lutic-intro-ring{animation:lutic-intro-ring 10s ease-in-out both}
+.lutic-intro.is-playing .lutic-intro-ring-outer{animation:lutic-intro-ring-outer 10s ease-in-out both}
+.lutic-intro.is-playing .lutic-intro-logo-art{animation:lutic-intro-awaken 10s ease-in-out both}
+.lutic-intro.is-playing .lutic-intro-logo-travel{animation:lutic-intro-travel 10s cubic-bezier(.22,.75,.2,1) both}
+.lutic-intro.is-playing[data-matched="false"] .lutic-intro-logo-travel{animation:lutic-intro-chrome 10s linear both}
+.lutic-intro.is-playing .lutic-intro-link{animation:lutic-link-in .85s cubic-bezier(.22,.8,.2,1) calc(2s + var(--branch-delay)) both,lutic-link-out .8s ease-in-out calc(7.5s + var(--branch-delay)) forwards}
+.lutic-intro.is-playing .lutic-intro-node{animation:lutic-node-in .5s cubic-bezier(.2,.9,.3,1.2) calc(2.35s + var(--branch-delay)) both,lutic-node-out .6s ease-in calc(7.5s + var(--branch-delay)) forwards}
+.lutic-intro.is-playing .lutic-intro-pulse{animation:lutic-packet .9s ease-in-out calc(4.5s + var(--check-delay)) both}
+.lutic-intro.is-playing .lutic-intro-node-fill{animation:lutic-node-verified .25s ease-out calc(5.1s + var(--check-delay)) forwards}
+.lutic-intro.is-playing .lutic-intro-node-icon{animation:lutic-icon-out .2s ease calc(5.1s + var(--check-delay)) forwards}
+.lutic-intro.is-playing .lutic-intro-node-check{animation:lutic-check-in .36s ease-out calc(5.2s + var(--check-delay)) forwards}
+.lutic-intro.is-playing .lutic-intro-progress span{animation:lutic-progress 10s linear forwards}
+.lutic-intro.is-playing .lutic-intro-logo-art svg ellipse{animation:lutic-intro-blink 10s ease-in-out both;transform-box:fill-box;transform-origin:center}
+@keyframes lutic-caption-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes lutic-intro-reveal{0%,88%{opacity:1}100%{opacity:0}}
+@keyframes lutic-intro-chrome{0%,84%{opacity:1}92%,100%{opacity:0}}
+@keyframes lutic-intro-awaken{0%{transform:scale(.82) rotate(-12deg);opacity:0}8%{transform:scale(1.06) rotate(3deg);opacity:1}20%,44%,75%,88%,100%{transform:scale(1) rotate(0deg);opacity:1}52%{transform:scale(1.06)}64%{transform:scale(1)}}
+@keyframes lutic-intro-blink{0%,5%{transform:scaleY(.1)}10%,45%{transform:scaleY(1)}46%{transform:scaleY(.08)}48%,100%{transform:scaleY(1)}}
+@keyframes lutic-intro-ring{0%{opacity:0;transform:scale(.75)}12%{opacity:.34;transform:scale(1)}20%{opacity:.22}30%,75%{opacity:0}84%{opacity:.30;transform:scale(1)}88%,100%{opacity:0}}
+@keyframes lutic-intro-ring-outer{0%{opacity:0;transform:scale(.75)}15%{opacity:.12;transform:scale(1)}23%,100%{opacity:0}}
+@keyframes lutic-link-in{from{opacity:0;stroke-dashoffset:1}to{opacity:.65;stroke-dashoffset:0}}
+@keyframes lutic-link-out{from{opacity:.65;stroke-dashoffset:0}to{opacity:0;stroke-dashoffset:1}}
+@keyframes lutic-node-in{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
+@keyframes lutic-node-out{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.65)}}
+@keyframes lutic-packet{0%{opacity:0;stroke-dashoffset:1}18%{opacity:1}80%{opacity:1}100%{opacity:0;stroke-dashoffset:0}}
+@keyframes lutic-node-verified{to{fill:#101012}}
+@keyframes lutic-icon-out{to{opacity:0}}
+@keyframes lutic-check-in{from{opacity:1;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
+@keyframes lutic-progress{to{transform:scaleX(1)}}
+@keyframes lutic-intro-travel{0%,88%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--handoff-x),var(--handoff-y)) scale(var(--handoff-scale))}}
+@media(max-width:600px){.lutic-intro-brand{left:20px;top:max(22px,env(safe-area-inset-top))}.lutic-intro-skip{right:20px;top:max(22px,env(safe-area-inset-top))}.lutic-intro-stage{width:min(92vw,73vh)}.lutic-intro-logo-anchor{width:min(23vw,18.25vh)}.lutic-intro-caption{bottom:max(30px,calc(env(safe-area-inset-bottom) + 16px))}}
+@media(max-height:480px) and (orientation:landscape){.lutic-intro-stage,.lutic-intro-logo-anchor{top:44%}.lutic-intro-caption{bottom:10px}.lutic-intro-caption-copy strong{font-size:23px}.lutic-intro-caption-copy p{min-height:0}.lutic-intro-progress{margin-top:6px}}
+@media(prefers-reduced-motion:reduce){.lutic-intro{display:none!important}}

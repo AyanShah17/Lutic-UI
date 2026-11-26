@@ -19,7 +19,7 @@ const pb=document.querySelector('.bar-top');
 addEventListener('scroll',()=>{if(pb)pb.style.width=Math.max(0,Math.min(100,scrollY/Math.max(1,document.body.scrollHeight-innerHeight)*100))+'%'},{passive:true});
 // eye tracking: the logo watches the cursor
 const eyes=$('[data-eye]');
-addEventListener('pointermove',e=>{if(rm)return;$('svg.logo').forEach(s=>{const b=s.getBoundingClientRect();if(!b.width)return;
+addEventListener('pointermove',e=>{if(rm||document.documentElement.classList.contains('lutic-intro-active'))return;$('svg.logo').forEach(s=>{const b=s.getBoundingClientRect();if(!b.width)return;
  const dx=e.clientX-(b.left+b.width/2),dy=e.clientY-(b.top+b.height/2),d=Math.hypot(dx,dy)||1,k=Math.min(8,d/40);
  $('[data-eye]',s).forEach(g=>g.setAttribute('transform',`translate(${dx/d*k} ${dy/d*k})`))})});
 // hero mascot parallax + scroll spin
@@ -27,7 +27,7 @@ const m=document.querySelector('.mascot svg'),chips=$('.mascot .chip');
 let mx=0,my=0;
 addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;frame()});
 addEventListener('scroll',frame,{passive:true});
-function frame(){if(!m||rm)return;const s=Math.min(scrollY,900);
+function frame(){if(!m||rm||document.documentElement.classList.contains('lutic-intro-active'))return;const s=Math.min(scrollY,900);
  m.style.transform=`perspective(900px) rotateY(${mx*16}deg) rotateX(${-my*16}deg) rotate(${s*.08}deg) scale(${1-s/2400})`;
  chips.forEach((c,i)=>c.style.transform=`translate(${mx*(30+i*20)}px,${my*(30+i*20)-s*(.1+i*.08)}px)`)}
 // reveal
