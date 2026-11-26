@@ -65,7 +65,7 @@ loopWhenVisible(c,t=>{const dt=Math.min(.05,(t-last)/1000||0);last=t;const b=c.g
 ps.forEach(p=>{if(!rmq){p.a+=dt*p.s*(260/p.r)*1.4;p.r-=dt*14*p.s}if(p.r<36){p.r=300+Math.random()*180;p.a=Math.random()*6.283}const al=Math.min(1,p.r/160)*.55;x.fillStyle=p.r<120?`rgba(238,84,20,${al+.2})`:`rgba(150,150,158,${al})`;x.beginPath();x.arc(cx+Math.cos(p.a)*p.r*1.6,cy+Math.sin(p.a)*p.r*.5,1.2+(1-Math.min(1,p.r/400))*1.8,0,6.283);x.fill()})})})();
 addEventListener('pointermove',e=>{if(rmq)return;document.querySelectorAll('.btn').forEach(b=>{const r=b.getBoundingClientRect();if(!r.width)return;const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);b.style.transform=Math.hypot(dx,dy)<90?`translate(${dx*.22}px,${dy*.3}px)`:''})},{passive:true});
 const rt=document.getElementById('rot');if(rt&&!rmq){const L=['AI solutions','agentic automations','autonomous systems','AI integrations','production consulting','AI support'];let i=0;setInterval(()=>{rt.classList.add('o');setTimeout(()=>{i=(i+1)%L.length;rt.textContent=L[i];rt.classList.remove('o')},380)},2600)}
-document.querySelectorAll('.gal').forEach(g=>{const ps=[...g.children],set=p=>ps.forEach(q=>q.classList.toggle('on',q===p));ps.forEach(p=>{on(p,'pointerenter',()=>set(p));on(p,'focus',()=>set(p))});set(ps[0])});
+// Service cards use responsive CSS hover/focus states; no JS expansion or forced active item.
 
     return ()=>{
       controller.abort();frames.forEach(id=>window.cancelAnimationFrame(id));intervals.forEach(id=>window.clearInterval(id));timeouts.forEach(id=>window.clearTimeout(id));observers.forEach(o=>o.disconnect());

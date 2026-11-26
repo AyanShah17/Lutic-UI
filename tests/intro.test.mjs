@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {INTRO_DURATION,INTRO_HANDOFF,INTRO_RECENTER,INTRO_GATE_OPEN,INTRO_PHASES,shouldPlayIntro,handoffGeometry,cursorPose} from "../lib/intro.mjs";
+import {INTRO_DURATION,INTRO_HANDOFF,INTRO_RECENTER,INTRO_GATE_OPEN,INTRO_PHASES,shouldPlayIntro,handoffGeometry,cursorPose,PIXEL_GLYPHS,pixelWordmark,revealProgress} from "../lib/intro.mjs";
 
 test("wordmark, mascot and homepage fit into the 4.5-second sequence",()=>{
  assert.equal(INTRO_DURATION,4500);
@@ -30,4 +30,14 @@ test("cursor follow is directional, bounded and neutral at center",()=>{
  assert.ok(Math.hypot(far.eyeX,far.eyeY)<=8.001);
  assert.ok(cursorPose(50,0,140).x<cursorPose(1000,0,140).x);
  assert.deepEqual(cursorPose(NaN,0,140),{x:0,y:0,eyeX:0,eyeY:0});
+});
+
+test("pixel wordmark has five glyphs, unique integer cells and fixed dimensions",()=>{
+ const mark=pixelWordmark(PIXEL_GLYPHS);
+ assert.equal(mark.height,9);assert.equal(PIXEL_GLYPHS.length,5);
+ assert.equal(new Set(mark.pixels.map(p=>p.x+","+p.y)).size,mark.pixels.length);
+ assert.ok(mark.pixels.every(p=>Number.isInteger(p.x)&&Number.isInteger(p.y)&&p.x>=0&&p.x<mark.width&&p.y>=0&&p.y<mark.height));
+});
+test("gate and logo share a bounded easing clock",()=>{
+ assert.equal(revealProgress(0,1080),0);assert.equal(revealProgress(540,1080),.5);assert.equal(revealProgress(1080,1080),1);assert.equal(revealProgress(5000,1080),1);
 });
