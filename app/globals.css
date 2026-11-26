@@ -131,3 +131,20 @@ nav .btn{white-space:nowrap}
 .reel{min-width:0}
 @media(max-width:420px){.wrap,.wrap.hero,.wrap.pg{padding-inline:18px}nav .brand{font-size:16px;gap:5px}nav .btn,.mb{font-size:13px;padding:9px 12px}.stats strong{font-size:42px}.proc{gap:12px}.gp{padding:18px}.kb{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.motion-ready .rv:not(.in){opacity:1;transform:none}.steps li.on{transform:none}.scrub span{color:var(--ink)}.term div{opacity:1}}
+
+/* SEO content follows the existing responsive visual system. */
+.breadcrumbs{margin:0 0 18px;color:var(--mut);font-size:14px}
+.breadcrumbs ol{list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:0;margin:0}
+.breadcrumbs li+li:before{content:"/";color:var(--mut);margin-right:10px}
+.breadcrumbs a:hover,.seo-link:hover{color:var(--or)}
+.breadcrumbs [aria-current="page"]{color:var(--ink)}
+.seo-link{text-decoration:underline;text-underline-offset:3px}
+.seo-overview{padding:80px 0 0}
+.seo-overview>.lead{margin-top:18px;max-width:760px}
+.seo-capability-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:32px}
+.seo-capability-grid article{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.seo-capability-grid h3{font-size:21px;margin-bottom:10px}
+.seo-capability-grid p{color:var(--mut);font-size:16px}
+[id]{scroll-margin-top:100px}
+@media(max-width:900px){.seo-capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.seo-capability-grid{grid-template-columns:1fr}.seo-overview{padding-top:48px}}

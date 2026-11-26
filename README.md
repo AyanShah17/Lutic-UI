@@ -35,3 +35,27 @@ Copy `.env.example` to `.env.local`, configure an HTTPS `CONTACT_WEBHOOK_URL` an
 The source's product descriptions, connector counts, operational metrics and other claims have not been independently validated. Verify them before publishing. Platform demos are frontend illustrations, not connected plant telemetry or an operational agent backend. External Google Fonts may use system fallbacks if blocked.
 
 No dependency lockfile was generated in the offline migration environment. Run npm install and commit the resulting lockfile after validating the production build.
+
+## Search engine optimization
+
+The shared registry in `lib/seo.mjs` generates unique titles, descriptions, canonical URLs, Open Graph and Twitter tags, branded 1200×630 PNG previews, Organization/WebSite/WebPage/Service/BreadcrumbList JSON-LD, visible breadcrumbs, robots and the XML sitemap. All eleven platform capability summaries are visible in server-rendered HTML.
+
+### Before going live
+
+1. Set `SITE_URL` to the verified public HTTPS origin (no path, port, query or fragment) in the production hosting environment at build time, then redeploy. Missing/invalid domains, non-production Vercel/Netlify deployments, development and `SEO_NOINDEX=1` are noindex. Robots deliberately permits crawling public pages so crawlers can read noindex. Preview noindex is not access control.
+2. Configure the hosting provider to redirect alternate domains to the canonical host. Ensure no deployment-level robots header blocks production. The sitemap lists the six canonical pages; no fabricated last-modified dates or priorities.
+3. Verify the domain in Google Search Console using DNS verification or the HTML-tag token in `GOOGLE_SITE_VERIFICATION`. Submit `/sitemap.xml` in Search Console and optionally Bing Webmaster Tools.
+4. Verify the existing marketing claims before publishing. Illustrative statistics and simulated platform data are marked data-nosnippet; schema does not contain unverified customer names, ratings, business addresses, certifications or performance claims.
+5. Use the live URL inspection, Rich Results Test and PageSpeed Insights to validate crawlability, structured data and Core Web Vitals. Search rankings and indexing are not guaranteed.
+
+```sh
+npm run test:seo
+npm run build
+npm start
+# Live production checks:
+SITE_URL=https://example.com npm run check:seo -- https://example.com
+# Local/preview checks:
+EXPECT_NOINDEX=1 npm run check:seo -- http://localhost:3000
+```
+
+Social preview routes: `/og/home`, `/og/solutions`, `/og/platform`, `/og/agents`, `/og/consulting`, `/og/contact`.
