@@ -221,3 +221,7 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 
 /* The intro itself is the entrance; never restart the original hero keyframes after handoff. */
 .lutic-intro-complete .hero h1,.lutic-intro-complete .hero .lead,.lutic-intro-complete .hero .row,.lutic-intro-complete [data-lutic-hero-mascot] svg{animation:none}
+
+/* The welcome sequence moves focus to the non-interactive hero heading for screen readers.
+   Avoid a decorative focus rectangle here; keep visible focus on links, buttons and inputs. */
+[data-view="home"] .hero h1[tabindex="-1"]:focus{outline:none}
