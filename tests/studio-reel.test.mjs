@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,chapterPreview,stageProgress} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,chapterPreview,stageProgress,nextSceneIndex} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("six distinct service scenes and canonical service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,30);
@@ -15,4 +15,8 @@ test("chapter seeking, progress, and loop boundaries",()=>{
 });
 test("scene reveal is deterministic and bounded",()=>{
  for(let i=0;i<3;i++){assert.equal(stageProgress(0,i),0);assert.equal(stageProgress(1,i),1);assert.ok(stageProgress(.4,i)>=0&&stageProgress(.4,i)<=1);}
+});
+
+test("autoplay advances through all six scenes and wraps without a per-frame React update",()=>{
+ for(let i=0;i<SCENES.length;i++)assert.equal(nextSceneIndex(i),(i+1)%SCENES.length);
 });
