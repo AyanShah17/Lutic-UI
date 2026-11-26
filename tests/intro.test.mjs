@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {INTRO_DURATION,INTRO_HANDOFF,INTRO_RECENTER,INTRO_GATE_OPEN,INTRO_PHASES,shouldPlayIntro,handoffGeometry,cursorPose,PIXEL_GLYPHS,pixelWordmark,revealProgress} from "../lib/intro.mjs";
+import {INTRO_DURATION,INTRO_HANDOFF,INTRO_RECENTER,INTRO_GATE_OPEN,INTRO_PHASES,shouldPlayIntro,shouldResetHomepageScroll,HOME_RELOAD_SCROLL_SCRIPT,handoffGeometry,cursorPose,PIXEL_GLYPHS,pixelWordmark,revealProgress} from "../lib/intro.mjs";
 
 test("wordmark, mascot and homepage fit into the 4.5-second sequence",()=>{
  assert.equal(INTRO_DURATION,4500);
@@ -40,4 +40,28 @@ test("pixel wordmark has five glyphs, unique integer cells and fixed dimensions"
 });
 test("gate and logo share a bounded easing clock",()=>{
  assert.equal(revealProgress(0,1080),0);assert.equal(revealProgress(540,1080),.5);assert.equal(revealProgress(1080,1080),1);assert.equal(revealProgress(5000,1080),1);
+});
+
+test("scroll reset only applies to a fresh homepage reload, not deep links or history traversal",()=>{
+ const reload={navigationType:"reload",pathname:"/"};
+ assert.equal(shouldResetHomepageScroll(reload),true);
+ for(const options of [{...reload,hash:"#lutic-services"},{...reload,consumed:true},{...reload,pathname:"/solutions"},{...reload,navigationType:"back_forward"},{...reload,navigationType:"navigate"}])assert.equal(shouldResetHomepageScroll(options),false);
+});
+test("early scroll script holds manual restoration while intro is active and releases after pageshow",()=>{
+ // Simulate the browser lifecycle without a DOM or a network.
+ const callbacks=[],events={},calls=[];
+ const history={scrollRestoration:"auto"};
+ const window={scrollTo:opts=>calls.push(opts),addEventListener:(name,fn)=>events[name]=fn};
+ const document={documentElement:{classList:{contains:()=>true}}};
+ const performance={getEntriesByType:()=>[{type:"reload"}]};
+ const location={pathname:"/",hash:""};
+ const requestAnimationFrame=fn=>callbacks.push(fn);
+ new Function("window","document","performance","history","location","requestAnimationFrame",HOME_RELOAD_SCROLL_SCRIPT)(window,document,performance,history,location,requestAnimationFrame);
+ assert.equal(history.scrollRestoration,"manual");
+ assert.deepEqual(calls[0],{top:0,left:0,behavior:"instant"});
+ events.pageshow();callbacks.shift()();callbacks.shift()();
+ assert.equal(history.scrollRestoration,"manual");
+ window.__luticReleaseHomeScroll();
+ assert.equal(history.scrollRestoration,"auto");
+ assert.equal(window.__luticReleaseHomeScroll,undefined);
 });

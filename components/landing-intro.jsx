@@ -2,7 +2,7 @@
 
 import {useLayoutEffect,useRef} from "react";
 import Logo from "./logo";
-import {INTRO_DURATION,INTRO_HANDOFF,INTRO_STORAGE_KEY,INTRO_RECENTER,shouldPlayIntro,handoffGeometry,cursorPose,PIXEL_GLYPHS,pixelWordmark,revealProgress} from "@/lib/intro.mjs";
+import {INTRO_DURATION,INTRO_HANDOFF,INTRO_STORAGE_KEY,INTRO_RECENTER,shouldPlayIntro,shouldResetHomepageScroll,handoffGeometry,cursorPose,PIXEL_GLYPHS,pixelWordmark,revealProgress} from "@/lib/intro.mjs";
 
 const wordmark=pixelWordmark(PIXEL_GLYPHS);
 function PixelWordmark(){
@@ -22,11 +22,15 @@ export default function LandingIntro(){
   const navigation=window.performance.getEntriesByType?.("navigation")?.[0];
   // Navigation Timing stays unchanged during SPA transitions; consume the reload
   // override only on the first homepage mount of this document.
-  const reload=navigation?.type==="reload"&&new URL(navigation.name).pathname==="/"&&!root.hasAttribute("data-lutic-intro-reload-consumed");
-  if(!shouldPlayIntro({seen,reducedMotion:media.matches,hash:window.location.hash,scrollY:window.scrollY,reload}))return;
-  if(reload){
-   // The landing animation must reveal the top of the homepage, not restored scroll.
-   window.scrollTo({top:0,left:0,behavior:"instant"});
+  const reload=shouldResetHomepageScroll({navigationType:navigation?.type,pathname:navigation?new URL(navigation.name).pathname:"",hash:window.location.hash,consumed:root.hasAttribute("data-lutic-intro-reload-consumed")});
+  const resetTop=()=>{
+   if(reload&&(window.scrollX!==0||window.scrollY!==0))window.scrollTo({top:0,left:0,behavior:"instant"});
+  };
+  // Also reset for reduced-motion users, even if the intro is bypassed.
+  resetTop();
+  if(!shouldPlayIntro({seen,reducedMotion:media.matches,hash:window.location.hash,scrollY:window.scrollY,reload})){
+   if(reload){root.setAttribute("data-lutic-intro-reload-consumed","");window.__luticReleaseHomeScroll?.();}
+   return;
   }
   let finished=false;
   const timers=[];
@@ -58,6 +62,7 @@ export default function LandingIntro(){
   // Measure the actual SVG, not the outer hero card. Keep the endpoint current
   // throughout the gate movement, including font swaps, zoom and responsive reflow.
   const measure=()=>{
+   resetTop();
    const target=hero()?.getBoundingClientRect();
    const visible=target&&target.bottom>0&&target.top<window.innerHeight&&target.right>0&&target.left<window.innerWidth;
    return handoffGeometry(logo.getBoundingClientRect(),visible?target:null);
@@ -69,6 +74,7 @@ export default function LandingIntro(){
    travel.style.opacity=g.matched?"1":String(1-progress);
   };
   const beginReveal=()=>{
+   resetTop();
    stopTracking();
    // RAF controls both panels and the mascot using one clock, with a final
    // exact endpoint before swapping to the real hero. No CSS/timer race.
@@ -89,6 +95,7 @@ export default function LandingIntro(){
    dialog.removeEventListener("pointermove",onPointerMove);
    dialog.removeEventListener("pointerleave",resetPose);
    window.removeEventListener("blur",resetPose);
+   window.removeEventListener("scroll",resetTop);
    if(revealFrame)window.cancelAnimationFrame(revealFrame);
    travel.style.removeProperty("transform");
    travel.style.removeProperty("opacity");
@@ -98,6 +105,8 @@ export default function LandingIntro(){
    root.classList.remove("lutic-intro-active");
    dialog.classList.remove("is-playing");
    if(dialog.open)dialog.close();
+   resetTop();
+   if(reload)window.__luticReleaseHomeScroll?.();
   };
   const finish=()=>{
    if(finished)return;
@@ -112,11 +121,16 @@ export default function LandingIntro(){
    // Do not send focus to the document body or make keyboard users start over.
    if(priorFocus&&priorFocus!==document.body&&priorFocus.isConnected)priorFocus.focus({preventScroll:true});
    else home?.querySelector("h1")?.focus({preventScroll:true});
+   // Dialog focus restoration can scroll even after the browser history reset.
+   resetTop();
   };
   const onCancel=e=>{e.preventDefault();finish();};
   const onMotionChange=e=>{if(e.matches)finish();};
   root.classList.add("lutic-intro-active");
+  resetTop();
+  if(reload)window.addEventListener("scroll",resetTop,{passive:true});
   try{dialog.showModal();}catch{cleanup();return;}
+  resetTop();
   dialog.classList.add("is-playing");
   dialog.addEventListener("pointermove",onPointerMove,{passive:true});
   dialog.addEventListener("pointerleave",resetPose,{passive:true});
