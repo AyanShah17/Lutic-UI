@@ -1,8 +1,8 @@
 "use client";
 
-import {useLayoutEffect,useRef,useState} from "react";
+import {useLayoutEffect,useRef} from "react";
 import Logo from "./logo";
-import {INTRO_DURATION,INTRO_HANDOFF,INTRO_STORAGE_KEY,INTRO_PHASES,shouldPlayIntro,handoffGeometry} from "@/lib/intro.mjs";
+import {INTRO_DURATION,INTRO_HANDOFF,INTRO_STORAGE_KEY,INTRO_PHASES,shouldPlayIntro,handoffGeometry,cursorPose} from "@/lib/intro.mjs";
 
 // Six branches, in the same radial arrangement as the approved storyboard.
 const nodes=[
@@ -21,7 +21,7 @@ function Network(){
   {nodes.map(({x,y,name,icon},i)=>{
    const dx=x-300,dy=y-220,d=Math.hypot(dx,dy),sx=300+dx/d*64,sy=220+dy/d*64,ex=x-dx/d*23,ey=y-dy/d*23;
    const path="M"+sx+" "+sy+"L"+ex+" "+ey;
-   return <g key={name} className="lutic-intro-branch" style={{"--branch-delay":(i*.12)+"s","--check-delay":(i*.23)+"s"}}>
+   return <g key={name} className="lutic-intro-branch" style={{"--branch-delay":(i*.096)+"s","--check-delay":(i*.184)+"s"}}>
     <path className="lutic-intro-link" d={path} pathLength="1"/>
     <path className="lutic-intro-pulse" d={path} pathLength="1"/>
     <g transform={"translate("+x+" "+y+")"}>
@@ -37,11 +37,10 @@ function Network(){
 }
 
 export default function LandingIntro(){
- const dialogRef=useRef(null),logoRef=useRef(null),skipRef=useRef(null),finishRef=useRef(null);
- const [phase,setPhase]=useState(0);
+ const dialogRef=useRef(null),logoRef=useRef(null),followRef=useRef(null);
  useLayoutEffect(()=>{
-  const dialog=dialogRef.current,logo=logoRef.current;
-  if(!dialog||!logo||typeof dialog.showModal!=="function")return;
+  const dialog=dialogRef.current,logo=logoRef.current,follow=followRef.current;
+  if(!dialog||!logo||!follow||typeof dialog.showModal!=="function")return;
   const root=document.documentElement;
   const media=window.matchMedia("(prefers-reduced-motion: reduce)");
   let seen=false;
@@ -60,6 +59,28 @@ export default function LandingIntro(){
   const priorFocus=document.activeElement;
   const home=document.querySelector("[data-view='home']");
   const hero=()=>home?.querySelector("[data-lutic-hero-mascot] svg");
+  const eyes=[...follow.querySelectorAll("[data-eye]")];
+  let pointerFrame=0,point=null,tracking=true;
+  const setPose=({x,y,eyeX,eyeY})=>{
+   follow.style.setProperty("--cursor-x",x+"px");
+   follow.style.setProperty("--cursor-y",y+"px");
+   eyes.forEach(eye=>{eye.style.setProperty("--eye-x",eyeX+"px");eye.style.setProperty("--eye-y",eyeY+"px");});
+  };
+  const resetPose=()=>{
+   if(pointerFrame)window.cancelAnimationFrame(pointerFrame);
+   pointerFrame=0;point=null;setPose({x:0,y:0,eyeX:0,eyeY:0});
+  };
+  const onPointerMove=e=>{
+   if(!tracking||e.pointerType==="touch")return;
+   point={x:e.clientX,y:e.clientY};
+   if(pointerFrame)return;
+   pointerFrame=window.requestAnimationFrame(()=>{
+    pointerFrame=0;if(!tracking||!point)return;
+    const r=logo.getBoundingClientRect();
+    setPose(cursorPose(point.x-r.left-r.width/2,point.y-r.top-r.height/2,r.width));
+   });
+  };
+  const stopTracking=()=>{tracking=false;resetPose();};
   const syncTarget=()=>{
    // The outer anchor is never transformed; only its inner artwork animates.
    const target=hero()?.getBoundingClientRect();
@@ -72,13 +93,16 @@ export default function LandingIntro(){
   };
   const cleanup=()=>{
    timers.forEach(window.clearTimeout);
+   stopTracking();
+   dialog.removeEventListener("pointermove",onPointerMove);
+   dialog.removeEventListener("pointerleave",resetPose);
+   window.removeEventListener("blur",resetPose);
    window.removeEventListener("resize",syncTarget);
    media.removeEventListener?.("change",onMotionChange);
    dialog.removeEventListener("cancel",onCancel);
    root.classList.remove("lutic-intro-active");
    dialog.classList.remove("is-playing");
    if(dialog.open)dialog.close();
-   finishRef.current=null;
   };
   const finish=()=>{
    if(finished)return;
@@ -93,32 +117,27 @@ export default function LandingIntro(){
   };
   const onCancel=e=>{e.preventDefault();finish();};
   const onMotionChange=e=>{if(e.matches)finish();};
-  finishRef.current=finish;
   root.classList.add("lutic-intro-active");
   try{dialog.showModal();}catch{cleanup();return;}
   syncTarget();
   dialog.classList.add("is-playing");
-  skipRef.current?.focus({preventScroll:true});
+  dialog.addEventListener("pointermove",onPointerMove,{passive:true});
+  dialog.addEventListener("pointerleave",resetPose,{passive:true});
+  window.addEventListener("blur",resetPose);
   window.addEventListener("resize",syncTarget,{passive:true});
   media.addEventListener?.("change",onMotionChange);
   dialog.addEventListener("cancel",onCancel);
   // Re-measure after fonts/layout have settled and immediately before handoff.
   timers.push(window.setTimeout(syncTarget,INTRO_HANDOFF-50));
-  INTRO_PHASES.slice(1).forEach((p,i)=>timers.push(window.setTimeout(()=>setPhase(i+1),p.start)));
+  // Recenter before the final travel animation so cursor movement never shifts the landing point.
+  timers.push(window.setTimeout(stopTracking,INTRO_PHASES[3].start));
   timers.push(window.setTimeout(finish,INTRO_DURATION));
   return ()=>{finished=true;cleanup();};
  },[]);
- const current=INTRO_PHASES[phase];
- return <dialog ref={dialogRef} className="lutic-intro" aria-label="Lutic welcome animation">
+ return <dialog ref={dialogRef} className="lutic-intro" aria-label="Lutic welcome animation. Press Escape to continue to the homepage.">
   <div className="lutic-intro-backdrop" aria-hidden="true"/>
   <div className="lutic-intro-brand" aria-hidden="true"><span className="lutic-intro-wordmark">Lutic<span>.</span></span><span>Independent AI studio</span></div>
-  <button ref={skipRef} type="button" className="lutic-intro-skip" onClick={()=>finishRef.current?.()}>Skip intro <span aria-hidden="true">↗</span></button>
   <div className="lutic-intro-stage" aria-hidden="true"><Network/></div>
-  <div className="lutic-intro-logo-anchor" ref={logoRef} aria-hidden="true"><div className="lutic-intro-logo-travel"><div className="lutic-intro-logo-art"><Logo/></div></div></div>
-  <div className="lutic-intro-caption" aria-hidden="true">
-   <div className="lutic-intro-phase"><span>0{phase+1} / 04</span><span className="lutic-intro-phase-dot"/></div>
-   <div className="lutic-intro-caption-copy" key={current.label}><strong>{current.label}</strong><p>{current.detail}</p></div>
-   <div className="lutic-intro-progress"><span/></div>
-  </div>
+  <div className="lutic-intro-logo-anchor" ref={logoRef} aria-hidden="true"><div className="lutic-intro-logo-travel"><div className="lutic-intro-logo-follow" ref={followRef}><div className="lutic-intro-logo-art"><Logo/></div></div></div></div>
  </dialog>;
 }
