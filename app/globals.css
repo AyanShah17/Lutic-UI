@@ -149,8 +149,8 @@ nav .btn{white-space:nowrap}
 @media(max-width:900px){.seo-capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.seo-capability-grid{grid-template-columns:1fr}.seo-overview{padding-top:48px}}
 
-/* LUTIC — 8-second welcome sequence. The real homepage remains server-rendered.
-   0–1.6 awaken | 1.6–3.6 connect | 3.6–6 execute | 6–8 return / handoff. */
+/* LUTIC — minimal 4.5-second wordmark → mascot → homepage introduction.
+   All underlying homepage content remains server-rendered. */
 html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-behavior:none}
 .lutic-intro-active [data-lutic-hero-mascot] svg{visibility:hidden;animation:none!important;transform:none!important;transition:none!important}
 .lutic-intro-active .hero h1,.lutic-intro-active .hero .lead,.lutic-intro-active .hero .row{animation:none}
@@ -158,52 +158,38 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .lutic-intro:not([open]){display:none}
 .lutic-intro::backdrop{background:transparent}
 .lutic-intro-backdrop{position:absolute;inset:0;background:var(--bg);z-index:-1}
-.lutic-intro-brand{position:absolute;top:max(28px,env(safe-area-inset-top));left:max(30px,env(safe-area-inset-left));display:grid;gap:2px;font-size:12px;color:var(--mut)}
-.lutic-intro-wordmark{font-size:30px;font-weight:600;letter-spacing:-.07em;color:var(--ink);line-height:1}
-.lutic-intro-wordmark span{color:var(--or)}
-.lutic-intro-stage{position:absolute;left:50%;top:50%;width:min(76vw,580px,75vh);aspect-ratio:600/440;transform:translate(-50%,-50%);pointer-events:none}
-.lutic-intro-network{display:block;width:100%;height:100%;overflow:visible}
-.lutic-intro-logo-anchor{position:absolute;top:48%;left:50%;width:min(22vw,140px,21.7vh);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
+.lutic-intro-wordmark{position:absolute;left:50%;top:50%;font-size:clamp(88px,18vw,200px);font-weight:600;letter-spacing:-.085em;line-height:.94;color:var(--ink);white-space:nowrap;transform:translate(-50%,-50%);transform-origin:center;pointer-events:none}
+.lutic-intro-logo-anchor{position:absolute;top:50%;left:50%;width:clamp(132px,22vw,208px);max-width:42vh;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
 .lutic-intro-logo-travel,.lutic-intro-logo-follow,.lutic-intro-logo-art{width:100%;height:100%;transform-origin:center}
+.lutic-intro-logo-art{opacity:0}
 .lutic-intro-logo-art svg{display:block;width:100%;height:100%;filter:drop-shadow(0 14px 22px rgba(238,84,20,.18))}
-.lutic-intro-ring,.lutic-intro-ring-outer{stroke:var(--or);stroke-width:1.1;opacity:0;transform-box:fill-box;transform-origin:center}
-.lutic-intro-link{stroke:var(--or);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
-.lutic-intro-pulse{stroke:var(--or);stroke-width:3;stroke-linecap:round;stroke-dasharray:.13 .87;stroke-dashoffset:1;opacity:0}
-.lutic-intro-node{opacity:0;transform:scale(.65);transform-origin:0 0}
-.lutic-intro-node-fill{fill:var(--bg);stroke:var(--or);stroke-width:1.5}
-.lutic-intro-node-icon,.lutic-intro-node-check{stroke:var(--or);stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
-.lutic-intro-node-check{stroke:#fff;stroke-width:2.2;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
-.lutic-intro.is-playing .lutic-intro-backdrop{animation:lutic-intro-reveal 8s linear both}
-.lutic-intro.is-playing .lutic-intro-brand{animation:lutic-intro-chrome 8s linear both}
-.lutic-intro.is-playing .lutic-intro-ring{animation:lutic-intro-ring 8s ease-in-out both}
-.lutic-intro.is-playing .lutic-intro-ring-outer{animation:lutic-intro-ring-outer 8s ease-in-out both}
-.lutic-intro.is-playing .lutic-intro-logo-art{animation:lutic-intro-awaken 8s ease-in-out both}
-.lutic-intro.is-playing .lutic-intro-logo-travel{animation:lutic-intro-travel 8s cubic-bezier(.22,.75,.2,1) both}
-.lutic-intro.is-playing[data-matched="false"] .lutic-intro-logo-travel{animation:lutic-intro-chrome 8s linear both}
-.lutic-intro.is-playing .lutic-intro-link{animation:lutic-link-in 0.68s cubic-bezier(.22,.8,.2,1) calc(1.6s + var(--branch-delay)) both,lutic-link-out 0.64s ease-in-out calc(6s + var(--branch-delay)) forwards}
-.lutic-intro.is-playing .lutic-intro-node{animation:lutic-node-in 0.4s cubic-bezier(.2,.9,.3,1.2) calc(1.88s + var(--branch-delay)) both,lutic-node-out 0.48s ease-in calc(6s + var(--branch-delay)) forwards}
-.lutic-intro.is-playing .lutic-intro-pulse{animation:lutic-packet 0.72s ease-in-out calc(3.6s + var(--check-delay)) both}
-.lutic-intro.is-playing .lutic-intro-node-fill{animation:lutic-node-verified 0.2s ease-out calc(4.08s + var(--check-delay)) forwards}
-.lutic-intro.is-playing .lutic-intro-node-icon{animation:lutic-icon-out 0.16s ease calc(4.08s + var(--check-delay)) forwards}
-.lutic-intro.is-playing .lutic-intro-node-check{animation:lutic-check-in 0.288s ease-out calc(4.16s + var(--check-delay)) forwards}
-.lutic-intro.is-playing .lutic-intro-logo-art svg ellipse{animation:lutic-intro-blink 8s ease-in-out both;transform-box:fill-box;transform-origin:center}
-@keyframes lutic-intro-reveal{0%,88%{opacity:1}100%{opacity:0}}
-@keyframes lutic-intro-chrome{0%,84%{opacity:1}92%,100%{opacity:0}}
-@keyframes lutic-intro-awaken{0%{transform:scale(.82) rotate(-12deg);opacity:0}8%{transform:scale(1.06) rotate(3deg);opacity:1}20%,44%,75%,88%,100%{transform:scale(1) rotate(0deg);opacity:1}52%{transform:scale(1.06)}64%{transform:scale(1)}}
-@keyframes lutic-intro-blink{0%,5%{transform:scaleY(.1)}10%,45%{transform:scaleY(1)}46%{transform:scaleY(.08)}48%,100%{transform:scaleY(1)}}
-@keyframes lutic-intro-ring{0%{opacity:0;transform:scale(.75)}12%{opacity:.34;transform:scale(1)}20%{opacity:.22}30%,75%{opacity:0}84%{opacity:.30;transform:scale(1)}88%,100%{opacity:0}}
-@keyframes lutic-intro-ring-outer{0%{opacity:0;transform:scale(.75)}15%{opacity:.12;transform:scale(1)}23%,100%{opacity:0}}
-@keyframes lutic-link-in{from{opacity:0;stroke-dashoffset:1}to{opacity:.65;stroke-dashoffset:0}}
-@keyframes lutic-link-out{from{opacity:.65;stroke-dashoffset:0}to{opacity:0;stroke-dashoffset:1}}
-@keyframes lutic-node-in{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
-@keyframes lutic-node-out{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.65)}}
-@keyframes lutic-packet{0%{opacity:0;stroke-dashoffset:1}18%{opacity:1}80%{opacity:1}100%{opacity:0;stroke-dashoffset:0}}
-@keyframes lutic-node-verified{to{fill:#101012}}
-@keyframes lutic-icon-out{to{opacity:0}}
-@keyframes lutic-check-in{from{opacity:1;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
-@keyframes lutic-intro-travel{0%,88%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--handoff-x),var(--handoff-y)) scale(var(--handoff-scale))}}
-@media(max-width:600px){.lutic-intro-brand{left:20px;top:max(22px,env(safe-area-inset-top))}.lutic-intro-stage{width:min(92vw,73vh)}.lutic-intro-logo-anchor{width:min(23vw,18.25vh)}}
-@media(max-height:480px) and (orientation:landscape){.lutic-intro-stage,.lutic-intro-logo-anchor{top:50%}}
+.lutic-intro.is-playing .lutic-intro-wordmark{animation:lutic-wordmark-morph 4.5s cubic-bezier(.22,.75,.2,1) both}
+.lutic-intro.is-playing .lutic-intro-logo-art{animation:lutic-logo-morph 4.5s cubic-bezier(.22,.75,.2,1) both}
+.lutic-intro.is-playing .lutic-intro-backdrop{animation:lutic-intro-reveal 4.5s linear both}
+.lutic-intro.is-playing .lutic-intro-logo-travel{animation:lutic-intro-travel 4.5s cubic-bezier(.22,.75,.2,1) both}
+.lutic-intro.is-playing[data-matched="false"] .lutic-intro-logo-travel{animation:lutic-intro-fade 4.5s linear both}
+.lutic-intro.is-playing .lutic-intro-logo-art svg ellipse{animation:lutic-intro-blink 4.5s ease-in-out both;transform-box:fill-box;transform-origin:center}
+/* Letter spacing contracts and the wordmark collapses into the center as the logo expands from the same point. */
+@keyframes lutic-wordmark-morph{
+ 0%{opacity:1;transform:translate(-50%,-50%) scale(.94);letter-spacing:-.055em;filter:blur(0)}
+ 9%,24%{opacity:1;transform:translate(-50%,-50%) scale(1);letter-spacing:-.085em;filter:blur(0)}
+ 34%{opacity:.85;transform:translate(-50%,-50%) scale(.58,.82);letter-spacing:-.12em;filter:blur(1px);color:var(--or)}
+ 43%,100%{opacity:0;transform:translate(-50%,-50%) scale(.22,.4);letter-spacing:-.15em;filter:blur(8px);color:var(--or)}
+}
+@keyframes lutic-logo-morph{
+ 0%,26%{opacity:0;transform:scale(.22) rotate(-18deg);filter:blur(6px)}
+ 39%{opacity:1;transform:scale(.88) rotate(-8deg);filter:blur(0)}
+ 48%{opacity:1;transform:scale(1.055) rotate(2deg);filter:blur(0)}
+ 58%,100%{opacity:1;transform:scale(1) rotate(0);filter:blur(0)}
+}
+@keyframes lutic-intro-blink{
+ 0%,40%{transform:scaleY(1)}
+ 42%{transform:scaleY(.12)}
+ 45%,100%{transform:scaleY(1)}
+}
+@keyframes lutic-intro-reveal{0%,80%{opacity:1}100%{opacity:0}}
+@keyframes lutic-intro-travel{0%,80%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--handoff-x),var(--handoff-y)) scale(var(--handoff-scale))}}
+@keyframes lutic-intro-fade{0%,80%{opacity:1}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.lutic-intro{display:none!important}}
 
 /* The intro itself is the entrance; never restart the original hero keyframes after handoff. */
