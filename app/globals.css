@@ -224,4 +224,5 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 
 /* The welcome sequence moves focus to the non-interactive hero heading for screen readers.
    Avoid a decorative focus rectangle here; keep visible focus on links, buttons and inputs. */
-[data-view="home"] .hero h1[tabindex="-1"]:focus{outline:none}
+[data-view="home"] .hero h1[tabindex="-1"]:focus,
+[data-view="home"] .hero h1[tabindex="-1"]:focus-visible{outline:none;outline-offset:0;box-shadow:none}

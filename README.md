@@ -64,7 +64,7 @@ Social preview routes: `/og/home`, `/og/solutions`, `/og/platform`, `/og/agents`
 
 The homepage opens with the Lutic mascot storyboard, implemented as a native React/SVG/CSS animation rather than a video. The phases are Awaken (0–2s), Connect (2–4.5s), Execute (4.5–7.5s), and Return (7.5–10s). During the final 1.2 seconds the logo moves and scales to the actual homepage hero mascot while the overlay fades, without navigating away from the canonical homepage.
 
-The intro plays once per tab session; Skip intro or Escape dismisses it. Reduced-motion preferences, deep links, unsupported dialogs and JavaScript-disabled browsing bypass the intro. The underlying homepage remains server-rendered with the same metadata and route. No media download, external animation library or new dependency is required.
+The intro plays on the first homepage visit in a tab and again on each full homepage reload, including after scrolling. Ordinary in-app navigation back to the homepage does not replay it once seen. Skip intro or Escape dismisses it. Reduced-motion preferences, deep links, unsupported dialogs and JavaScript-disabled browsing bypass the intro. The underlying homepage remains server-rendered with the same metadata and route. No media download, external animation library or new dependency is required.
 
 ```sh
 npm run test:intro
@@ -72,4 +72,4 @@ npm run test:seo
 npm run build
 ```
 
-Browser acceptance checks: fresh tab, full ten-second playback, skip with mouse/keyboard, repeat navigation, mobile portrait and landscape, dark mode, reduced motion, and direct access to interior routes. Visual handoff and actual build should be checked in a browser/deployment.
+Browser acceptance checks: fresh tab, full ten-second playback, skip with mouse/keyboard, homepage reload at top and after scrolling, no orange heading focus box, repeat in-app navigation, mobile portrait and landscape, dark mode, reduced motion, and direct access to interior routes. Visual handoff and actual build should be checked in a browser/deployment.

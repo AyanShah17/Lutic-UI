@@ -46,7 +46,15 @@ export default function LandingIntro(){
   const media=window.matchMedia("(prefers-reduced-motion: reduce)");
   let seen=false;
   try{seen=sessionStorage.getItem(INTRO_STORAGE_KEY)==="1";}catch{}
-  if(!shouldPlayIntro({seen,reducedMotion:media.matches,hash:window.location.hash,scrollY:window.scrollY}))return;
+  const navigation=window.performance.getEntriesByType?.("navigation")?.[0];
+  // Navigation Timing stays unchanged during SPA transitions; consume the reload
+  // override only on the first homepage mount of this document.
+  const reload=navigation?.type==="reload"&&new URL(navigation.name).pathname==="/"&&!root.hasAttribute("data-lutic-intro-reload-consumed");
+  if(!shouldPlayIntro({seen,reducedMotion:media.matches,hash:window.location.hash,scrollY:window.scrollY,reload}))return;
+  if(reload){
+   // The landing animation must reveal the top of the homepage, not restored scroll.
+   window.scrollTo({top:0,left:0,behavior:"instant"});
+  }
   let finished=false;
   const timers=[];
   const priorFocus=document.activeElement;
@@ -76,11 +84,12 @@ export default function LandingIntro(){
    if(finished)return;
    finished=true;
    try{sessionStorage.setItem(INTRO_STORAGE_KEY,"1");}catch{}
+   if(reload)root.setAttribute("data-lutic-intro-reload-consumed","");
    home?.classList.add("lutic-intro-complete");
    cleanup();
    // Do not send focus to the document body or make keyboard users start over.
    if(priorFocus&&priorFocus!==document.body&&priorFocus.isConnected)priorFocus.focus({preventScroll:true});
-   else document.querySelector("[data-view='home'] h1")?.focus({preventScroll:true});
+   else home?.querySelector("h1")?.focus({preventScroll:true});
   };
   const onCancel=e=>{e.preventDefault();finish();};
   const onMotionChange=e=>{if(e.matches)finish();};
