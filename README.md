@@ -79,3 +79,7 @@ The six services use a three-column responsive grid (two on tablet, one on mobil
 ## Branded search and content SEO
 
 Production has 13 canonical routes, including dedicated agentic automation, AI integration and AI support pages, About Lutic and an Insights hub with two practical engineering guides. Existing routes and the intro are preserved. Keep SITE_URL=https://lutic.app and SEO_NOINDEX=0 in Vercel production. Preview deployments remain noindex. Submit the updated sitemap and inspect the homepage/new URLs in Search Console after deploying. Use verified official profile URLs only when adding sameAs; do not invent customer testimonials, office addresses or regional pages. Google chooses indexing and ranking; no code guarantees first position.
+
+## Studio reel
+
+The homepage includes a native React/SVG service showcase: six four-second scenes, with selectable chapters, play/pause, timeline scrubbing, responsive light/dark styling and service links. Scenes are illustrative workflows, not live client data. Autoplay stops outside the viewport or when the document is hidden; reduced-motion users start paused. The previous industrial motion asset remains at /motion-loop.html, unchanged. Run `npm run test:reel` for chapter and timeline checks.

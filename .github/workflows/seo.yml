@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: "22"
       - run: npm install --no-audit --no-fund
-      - run: npm run test:seo && npm run test:intro
+      - run: npm run test:seo && npm run test:intro && npm run test:reel
       - run: npm run build
       - name: Check built routes, sitemap, robots and metadata
         run: |
