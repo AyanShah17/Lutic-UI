@@ -1,16 +1,16 @@
 "use client";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,mascotPersona} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,AUTOMATION_TIMING} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and moving signals.
-function Node({x,y,w=142,h=64,label,detail,at=0,mark="dot",enabled=true}){
+function Node({x,y,w=142,h=64,label,detail,at=0,mark="dot",enabled=true,checkAt=at+.4}){
  return <g className={enabled?"sr-node sr-node-active":"sr-node sr-node-inactive"} style={{"--at":at+"s"}}>
   <rect x={x} y={y} width={w} height={h} rx="13"/>
   <circle cx={x+17} cy={y+19} r="4" className="sr-node-dot"/>
   <text x={x+29} y={y+23} className="sr-node-label">{label}</text>
   {detail&&<text x={x+15} y={y+44} className="sr-node-detail">{detail}</text>}
-  {enabled&&mark==="check"&&<path d={"M"+(x+w-23)+" "+(y+43)+"l4 4 7 -8"} className="sr-check" style={{"--at":(at+.4)+"s"}}/>}
+  {enabled&&mark==="check"&&<path d={"M"+(x+w-23)+" "+(y+43)+"l4 4 7 -8"} className="sr-check" style={{"--at":checkAt+"s"}}/>}
  </g>;
 }
 function Signal({d,at=0,duration=.92}){
@@ -25,115 +25,53 @@ const ORIGINAL_EYES=[[82,106],[118,97]];
 function eyeTransform([dx,dy,sx,sy,angle]){
  return "translate("+dx+"px,"+dy+"px) rotate("+angle+"deg) scale("+sx+","+sy+")";
 }
-function Face({initial,final,changeAt}){
- const start=mascotEyePose(initial),end=mascotEyePose(final);
- return <g className="sr-face" style={{"--face-at":changeAt+"s"}}>
+function Face({initial,middle,final,changeAt}){
+ const start=mascotEyePose(initial),end=mascotEyePose(final),mid=middle?mascotEyePose(middle):null;
+ return <g className={"sr-face"+(mid?" sr-face-review":"")} style={{"--face-at":changeAt+"s"}}>
   {ORIGINAL_EYES.map(([cx,cy],i)=><g key={i} transform={"translate("+cx+" "+cy+")"}>
-   <g className="sr-eye-pose" style={{"--eye-from":eyeTransform(start[i]),"--eye-to":eyeTransform(end[i])}}>
+   <g className="sr-eye-pose" style={{"--eye-from":eyeTransform(start[i]),"--eye-to":eyeTransform(end[i]),"--eye-middle":eyeTransform(mid?mid[i]:end[i])}}>
     <g className="sr-eye-blink"><ellipse cx="0" cy="0" rx="6.5" ry="8.5" fill="#fff"/></g>
    </g>
   </g>)}
  </g>;
 }
-// A matched industrial-design family in the logo's native 200-unit space.
- // Thick, rounded contours remain legible at the small diagram scale.
- // Accessories sit behind the two original eyes and avoid the bottom port.
-function Costume({accessory}){
- return <g className="sr-costume" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round">
-  {accessory==="glasses"?<>
-   <g fill="none" stroke="#101012" strokeWidth="8">
-    <path d="M49 103l14 1M98 101l5 -1M136 94l15 -4"/>
-    <rect x="64" y="88" width="36" height="36" rx="11" transform="rotate(-14 82 106)"/>
-    <rect x="100" y="79" width="36" height="36" rx="11" transform="rotate(-14 118 97)"/>
-   </g>
-   <g fill="none" stroke="#f4eee8" strokeWidth="4.8">
-    <path d="M49 103l14 1M98 101l5 -1M136 94l15 -4"/>
-    <rect x="64" y="88" width="36" height="36" rx="11" transform="rotate(-14 82 106)"/>
-    <rect x="100" y="79" width="36" height="36" rx="11" transform="rotate(-14 118 97)"/>
-   </g>
-   <g className="sr-persona-glint" fill="none" stroke="#ee5414" strokeWidth="3"><path d="M69 97l8 -3M105 88l8 -3"/></g>
-  </>:accessory==="antenna"?<>
-   <path d="M90 35l2 -9h16l3 9" fill="#101012" stroke="#f4eee8" strokeWidth="4.5"/>
-   <path d="M100 27V12" stroke="#101012" strokeWidth="9"/>
-   <path d="M100 27V12" stroke="#f4eee8" strokeWidth="4.5"/>
-   <circle cx="100" cy="10" r="8" fill="#101012" stroke="#f4eee8" strokeWidth="4"/>
-   <circle className="sr-persona-led" cx="100" cy="10" r="4" fill="#ee5414"/>
-   <g className="sr-persona-wave" fill="none" stroke="#ee5414" strokeWidth="3.5">
-    <path d="M84 13Q84 0 92 -3M116 13Q116 0 108 -3"/>
-    <path d="M77 16Q77 -3 87 -8M123 16Q123 -3 113 -8" opacity=".55"/>
-   </g>
-  </>:accessory==="visor"?<>
-   <path d="M53 86L63 77L135 65L148 76L148 108L138 119L65 132L53 119Z" fill="#101012" stroke="#101012" strokeWidth="7"/>
-   <path d="M53 86L63 77L135 65L148 76L148 108L138 119L65 132L53 119Z" fill="#ee5414" fillOpacity=".12" stroke="#f4eee8" strokeWidth="4.5"/>
-   <path d="M60 87l7 -5M134 112l7 -5" fill="none" stroke="#ee5414" strokeWidth="4"/>
-   <g transform="rotate(-10 100 100)"><path className="sr-persona-scan" d="M63 92H137" stroke="#ee5414" strokeWidth="3" opacity=".7"/></g>
-  </>:accessory==="helmet"?<>
-   <path d="M48 63L51 50Q54 20 86 17L90 12H108L112 17Q141 23 147 50L153 63L159 68L155 75L43 75L39 68Z" fill="#101012" stroke="#101012" strokeWidth="6"/>
-   <path d="M48 63L51 50Q54 20 86 17L90 12H108L112 17Q141 23 147 50L153 63L159 68L155 75L43 75L39 68Z" fill="#f4eee8" stroke="#101012" strokeWidth="3.5"/>
-   <path d="M89 18Q83 34 83 51M109 18Q115 34 115 51" stroke="#d2c9c1" strokeWidth="4" fill="none"/>
-   <path d="M44 66H154" stroke="#ee5414" strokeWidth="7"/>
-   <rect x="88" y="38" width="23" height="16" rx="5" fill="#101012"/>
-   <path className="sr-persona-led" d="M94 46l4 4 7 -8" fill="none" stroke="#ee5414" strokeWidth="3.5"/>
-  </>:accessory==="ports"?<>
-   <g fill="#101012" stroke="#101012" strokeWidth="7">
-    <path d="M45 93H24M155 93H176"/><rect x="18" y="83" width="30" height="34" rx="9"/><rect x="152" y="83" width="30" height="34" rx="9"/>
-   </g>
-   <g fill="#101012" stroke="#f4eee8" strokeWidth="4.5">
-    <rect x="18" y="83" width="30" height="34" rx="9"/><rect x="152" y="83" width="30" height="34" rx="9"/>
-    <path d="M18 94H7M18 106H7M182 94H193M182 106H193" fill="none"/>
-   </g>
-   <g className="sr-persona-port-in" fill="#ee5414"><rect x="26" y="91" width="14" height="18" rx="4"/></g>
-   <g className="sr-persona-port-out" fill="#ee5414"><rect x="160" y="91" width="14" height="18" rx="4"/></g>
-   <path d="M33 96v8M167 96v8" stroke="#101012" strokeWidth="3"/>
-  </>:accessory==="headset"?<>
-   <path d="M39 99V79Q39 29 100 29Q161 29 161 79V99" fill="none" stroke="#101012" strokeWidth="11"/>
-   <path d="M39 99V79Q39 29 100 29Q161 29 161 79V99" fill="none" stroke="#f4eee8" strokeWidth="6"/>
-   <path d="M72 35Q100 25 128 35" fill="none" stroke="#ee5414" strokeWidth="5"/>
-   <g fill="#101012" stroke="#f4eee8" strokeWidth="4.5">
-    <rect x="26" y="86" width="23" height="36" rx="9"/><rect x="151" y="86" width="23" height="36" rx="9"/>
-   </g>
-   <path d="M162 121Q162 139 142 140H133" fill="none" stroke="#101012" strokeWidth="8"/>
-   <path d="M162 121Q162 139 142 140H133" fill="none" stroke="#f4eee8" strokeWidth="4.5"/>
-   <rect x="121" y="134" width="17" height="12" rx="5" fill="#101012" stroke="#f4eee8" strokeWidth="3.5"/>
-   <circle className="sr-persona-led" cx="162" cy="104" r="5" fill="#ee5414"/>
-   <path className="sr-persona-mic" d="M125 130v-5M131 130v-8M137 131v-4" stroke="#ee5414" strokeWidth="2.8" fill="none"/>
-  </>:null}
- </g>;
-}
 function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=false}){
  const face=mascotExpression(service,reviewRequired);
- const persona=mascotPersona(service);
- const changeAt=service==="automation"?4.3:3.25;
+ const changeAt=service==="automation"?AUTOMATION_TIMING.directResultReady:3.25;
  return <g transform={"translate("+x+" "+y+")"}>
   <g transform={small?"scale(.86)":undefined}>
    <circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/>
-   <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" data-persona={persona.accessory} style={{"--at":at+"s"}}>
+   <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" data-service={service} style={{"--at":at+"s"}}>
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
-    <Costume accessory={persona.accessory}/>
-    <Face initial={face.initial} final={face.final} changeAt={changeAt}/>
+    <Face initial={face.initial} middle={face.middle} final={face.final} changeAt={changeAt}/>
    </g></g>
   </g>
  </g>;
 }
 function AutomationFlow({reviewRequired}){
- const nodes=automationFlow(reviewRequired);
+ const nodes=automationFlow(reviewRequired),t=AUTOMATION_TIMING;
+ const resultReady=reviewRequired?t.reviewResultReady:t.directResultReady;
  return <>
   <g fill="none" strokeLinecap="round" strokeLinejoin="round">
    {nodes.map(n=><path key={n.key+"-base"} d={n.d} className="sr-wire-base"/>)}
-   {nodes.filter(n=>n.enabled).map(n=><g key={n.key+"-live"}><path d={n.d} pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":n.wireAt+"s","--wire-duration":".58s"}} className="sr-wire-live"/><Signal d={n.d} at={n.wireAt} duration={.58}/></g>)}
-   <Signal d="M270 137V73" at={2.46} duration={.40}/>
+   {nodes.filter(n=>n.enabled).map(n=><g key={n.key+"-live"}><path d={n.d} pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":n.wireAt+"s","--wire-duration":n.wireDuration+"s"}} className="sr-wire-live"/><Signal d={n.d} at={n.wireAt} duration={n.wireDuration}/></g>)}
+   <Signal d="M270 137V73" at={t.toolReturn.at} duration={t.toolReturn.duration}/>
+   {reviewRequired&&<Signal d="M376 137V116Q376 104 364 104H282Q270 104 270 92V73" at={t.approval.at} duration={t.approval.duration}/>}
   </g>
   <Core x={270} y={49} at={.72} service="automation" reviewRequired={reviewRequired}/>
-  {nodes.map(n=><Node key={n.key} x={n.x} y={137} w={100} h={64} label={n.label} detail={n.detail} at={n.at} enabled={n.enabled} mark={n.key==="result"?"check":"dot"}/>)}
-  <g className="sr-auto-decision" style={{"--at":"3.78s"}}>
-   <text x="270" y="232" textAnchor="middle" className="sr-auto-outcome">{reviewRequired?"Review required · awaiting approval":"No review required · result ready"}</text>
-   <text x="270" y="250" textAnchor="middle" className="sr-caption">{reviewRequired?"Restricted actions wait for a human decision":"Permitted actions complete within policy"}</text>
+  {nodes.map(n=><Node key={n.key} x={n.x} y={137} w={100} h={64} label={n.label} detail={n.detail} at={n.at} checkAt={n.checkAt} enabled={n.enabled} mark={n.key==="result"||n.key==="review"?"check":"dot"}/>)}
+  {reviewRequired&&<g className="sr-auto-wait" style={{"--wait-at":t.reviewReady+"s","--wait-duration":(t.reviewApproved-t.reviewReady)+"s"}}>
+   <text x="270" y="232" textAnchor="middle" className="sr-auto-outcome">Awaiting human approval</text>
+  </g>}
+  <g className="sr-auto-decision" style={{"--at":resultReady+"s"}}>
+   <text x="270" y="232" textAnchor="middle" className="sr-auto-outcome">{reviewRequired?"Approved · result delivered":"Result delivered"}</text>
+   <text x="270" y="250" textAnchor="middle" className="sr-caption">{reviewRequired?"Example human approval received":"No review required"}</text>
   </g>
  </>;
 }
 function Diagram({scene,reviewRequired}){
- return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={mascotPersona(scene.key).name+". "+(scene.key==="automation"?scene.description+(reviewRequired?" This example requires review.":" This example returns a result directly."):scene.description)}>
+ return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={scene.key==="automation"?scene.description+(reviewRequired?" In this example, a human approves the review before the agent returns the result.":" This example returns a result directly."):scene.description}>
  <g className="sr-film-camera">
  {scene.key==="solutions"?<>
  <Wire d="M162 65H205Q220 65 220 80V102L235 120" at={0.18}/><Wire d="M162 217H205Q220 217 220 202V180L235 162" at={1.18}/><Wire d="M309 141H375" at={2.18}/>

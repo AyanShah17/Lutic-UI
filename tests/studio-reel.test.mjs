@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotPersona} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,AUTOMATION_TIMING} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,42);
@@ -35,9 +35,9 @@ test("automation connects every stage to the bottom-center mascot port",()=>{
   assert.ok(nodes.every(n=>n.d.includes("270 73")||n.d.endsWith("V73")));
   assert.ok(nodes.slice(0,3).every(n=>n.enabled));
   assert.equal(nodes[3].enabled,reviewRequired);
-  assert.equal(nodes[4].enabled,!reviewRequired);
+  assert.equal(nodes[4].enabled,true);
   assert.ok(nodes.every(n=>n.x>=0&&n.x+100<=540));
-  assert.ok(nodes.every(n=>n.wireAt+.58<SCENE_SECONDS));
+  assert.ok(nodes.every(n=>(n.wireAt+n.wireDuration)*FILM_PACE<SCENE_SECONDS));
  }
 });
 test("each reel cycle alternates the review-required and direct-result examples",()=>{
@@ -48,19 +48,29 @@ test("each reel cycle alternates the review-required and direct-result examples"
  assert.deepEqual(state,{index:0,reviewRequired:true});
 });
 
-test("automation signals arrive in story order before the final hold",()=>{
- const flow=automationFlow(false);
- assert.ok(flow[0].wireAt+.58<=flow[1].wireAt);
- assert.ok(flow[1].wireAt+.58<=flow[2].wireAt);
- assert.ok(flow[2].wireAt+.58<2.46);
- assert.ok(2.46+.4<flow[4].wireAt);
- assert.ok(flow[4].wireAt+.58<SCENE_SECONDS);
+test("review returns a human approval and then delivers the result",()=>{
+ const t=AUTOMATION_TIMING;
+ const end=slot=>slot.at+slot.duration;
+ assert.ok(end(t.request)<=t.plan.at);
+ assert.ok(end(t.plan)<=t.tools.at);
+ assert.ok(end(t.tools)<=t.toolReturn.at);
+ assert.ok(end(t.toolReturn)<=t.review.at);
+ assert.ok(end(t.review)<=t.approval.at);
+ assert.ok(end(t.approval)<=t.reviewResult.at);
+ assert.ok(Math.abs(end(t.reviewResult)-t.reviewResultReady)<1e-9);
+ assert.ok(end(t.toolReturn)<=t.directResult.at);
+ assert.equal(automationFlow(true)[4].wireAt,t.reviewResult.at);
+ assert.equal(automationFlow(false)[4].wireAt,t.directResult.at);
+ for(const review of [true,false]){
+  const result=automationFlow(review)[4];
+  assert.ok(SCENE_SECONDS*.955-(result.checkAt+.38)*FILM_PACE>.9);
+ }
 });
-
 test("every service has a distinctive mascot expression and meaningful outcome face",()=>{
  const initial=SCENES.map(s=>mascotExpression(s.key).initial);
  assert.equal(new Set(initial).size,SCENES.length);
- assert.equal(mascotExpression("automation",true).final,"patient");
+ assert.equal(mascotExpression("automation",true).middle,"patient");
+ assert.equal(mascotExpression("automation",true).final,"delighted");
  assert.equal(mascotExpression("automation",false).final,"delighted");
  assert.equal(mascotExpression("support").final,"relieved");
  assert.equal(mascotExpression("consulting").final,"confident");
@@ -68,14 +78,14 @@ test("every service has a distinctive mascot expression and meaningful outcome f
 
 test("slower film holds the completed automation scene before fading out",()=>{
  const flow=automationFlow(false);
- const lastCheck=(flow[4].at+.4+.38)*FILM_PACE;
+ const lastCheck=(flow[4].checkAt+.38)*FILM_PACE;
  assert.equal(SCENE_SECONDS,7);assert.equal(FILM_PACE,1.25);
  assert.ok(SCENE_SECONDS*.955-lastCheck>1);
 });
 test("all expressions preserve two subtle oval-eye transforms",()=>{
  for(const scene of SCENES)for(const review of [true,false]){
   const faces=mascotExpression(scene.key,review);
-  for(const expression of [faces.initial,faces.final]){
+  for(const expression of [faces.initial,faces.middle,faces.final].filter(Boolean)){
    const pose=mascotEyePose(expression);assert.equal(pose.length,2);
    for(const [dx,dy,sx,sy,angle] of pose){
     assert.ok(Math.abs(dx)<=3&&Math.abs(dy)<=3);
@@ -83,18 +93,4 @@ test("all expressions preserve two subtle oval-eye transforms",()=>{
    }
   }
  }
-});
-
-test("six service-specific mascot personas have distinct costumes",()=>{
- const personas=SCENES.map(s=>mascotPersona(s.key));
- assert.equal(new Set(personas.map(p=>p.accessory)).size,6);
- assert.equal(new Set(personas.map(p=>p.name)).size,6);
- assert.equal(mascotPersona("support").accessory,"headset");
- assert.equal(mascotPersona("consulting").accessory,"helmet");
- assert.throws(()=>mascotPersona("unknown"));
-});
-
-test("character accessory choices retain the six established roles",()=>{
- assert.deepEqual(SCENES.map(s=>mascotPersona(s.key).accessory),["glasses","antenna","visor","helmet","ports","headset"]);
- assert.equal(SCENE_SECONDS,7);assert.equal(REEL_SECONDS,42);
 });

@@ -289,8 +289,7 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @media(prefers-reduced-motion:reduce){.sr-scene{transition:none;transform:none}.sr-stage .sr-scene-active{animation:none!important}.sr-stage .sr-scene *{animation:none!important}.sr-clock{animation:none!important}}
 
 
-/* The automation diagram uses a single bottom-center orchestration bus.
-   Unchosen terminal branch stays neutral, and only the chosen outcome animates. */
+/* The review node is optional; both paths terminate at Result. */
 .sr-node-inactive rect{stroke:var(--line)}
 .sr-node-inactive .sr-node-dot{fill:var(--mut);opacity:.55}
 .sr-auto-outcome{font-family:Geist,system-ui,sans-serif;font-size:13px;font-weight:600;fill:var(--ink)}
@@ -316,25 +315,13 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-eye-express{from{transform:var(--eye-from)}to{transform:var(--eye-to)}}
 @keyframes sr-eye-blink{0%,19%,23%,78%,82%,100%{transform:scaleY(1)}21%,80%{transform:scaleY(.12)}}
 
-/* A coherent costume family: crisp dark housings, warm-white outlines and orange signals.
-   The character remains fixed on its workflow port; only local accents move. */
-.sr-costume{pointer-events:none;transform-box:fill-box;transform-origin:center}
-.sr-persona-glint,.sr-persona-wave,.sr-persona-mic{opacity:.8}
-.sr-persona-port-in,.sr-persona-port-out,.sr-persona-led{opacity:1}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-costume{animation:sr-costume-enter .4s cubic-bezier(.2,.75,.2,1) .18s both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-glint{animation:sr-persona-glint 1.1s ease-in-out 1.45s 2 both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-wave{animation:sr-persona-wave 1.05s ease-in-out .65s 3 both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-scan{animation:sr-persona-scan 1.35s ease-in-out .6s 3 both}
-.sr-stage[data-reduced="false"] .sr-scene-active [data-persona="helmet"] .sr-persona-led{animation:sr-persona-ready .45s ease 3.3s both}
-.sr-stage[data-reduced="false"] .sr-scene-active [data-persona="antenna"] .sr-persona-led{animation:sr-persona-led .9s ease-in-out .65s 3 both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-port-in{animation:sr-persona-led .8s ease-in-out .4s 2 both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-port-out{animation:sr-persona-led .8s ease-in-out 2.7s 2 both}
-.sr-stage[data-reduced="false"] .sr-scene-active [data-persona="headset"] .sr-persona-led,.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-mic{animation:sr-persona-led 1.1s ease-in-out 1.5s 2 both}
-/* Do not move the automation mascot off its lower-center connector. */
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art[data-persona="antenna"]{animation:none}
-@keyframes sr-costume-enter{from{opacity:0}to{opacity:1}}
-@keyframes sr-persona-glint{0%,100%{opacity:.65}45%{opacity:1}70%{opacity:.35}}
-@keyframes sr-persona-wave{0%{opacity:.3}45%{opacity:1}100%{opacity:.65}}
-@keyframes sr-persona-scan{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(12px);opacity:.85}}
-@keyframes sr-persona-ready{from{opacity:.15}to{opacity:1}}
-@keyframes sr-persona-led{0%{opacity:.35}50%,100%{opacity:1}}
+
+/* Keep the original mascot anchored to the orchestration bus. */
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art[data-service="automation"]{animation:none}
+.sr-auto-wait{opacity:0}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-wait{animation:sr-auto-wait calc((var(--wait-duration) + .1s) * var(--film-pace,1)) linear calc(var(--wait-at) * var(--film-pace,1)) both}
+@keyframes sr-auto-wait{0%{opacity:0}15%,80%{opacity:1}100%{opacity:0}}
+/* Two original oval eyes move through focus, patience and satisfaction.
+   No mouth, brows, costumes, or changes to the silhouette. */
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-review .sr-eye-pose{animation:sr-eye-review var(--scene-duration,7s) cubic-bezier(.25,.7,.25,1) both}
+@keyframes sr-eye-review{0%,42%{transform:var(--eye-from)}47%,60%{transform:var(--eye-middle)}75%,100%{transform:var(--eye-to)}}
