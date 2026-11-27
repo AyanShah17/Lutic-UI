@@ -1,6 +1,6 @@
 "use client";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,nextReelState,shouldRunReel,automationFlow,mascotExpression} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and moving signals.
@@ -19,39 +19,32 @@ function Signal({d,at=0,duration=.92}){
 function Wire({d,at=0,partial=false}){
  return <g fill="none" strokeLinecap="round"><path d={d} className="sr-wire-base"/><path d={d} pathLength="1" strokeDasharray="1" strokeDashoffset={partial ? .1 : 0} style={{"--at":at+"s","--end":partial ? .1 : 0}} className="sr-wire-live"/><Signal d={d} at={at}/></g>;
 }
-// Keep the official silhouette and face colors. Expressions use eye shape,
- // gaze and a small, optional smile rather than changing the brand mark.
-function Face({expression,className=""}){
- const happy=expression==="delighted"||expression==="relieved";
- const eyeShapes={
-  curious:[[79,103,6.5,10],[116,96,7.5,12]],
-  focused:[[82,105,7.5,5.5],[118,99,7.5,5.5]],
-  alert:[[82,102,7.5,12],[118,102,7.5,12]],
-  thoughtful:[[78,98,6.5,8],[114,91,6.5,7]],
-  concerned:[[82,106,6.5,8.5],[118,103,6.5,8.5]],
-  patient:[[82,104,7,4],[118,100,7,4]],
-  confident:[[82,103,7,6],[118,98,7,6]]
- };
- const eyes=eyeShapes[expression]||eyeShapes.curious;
- return <g className={"sr-face "+className}>
-  {happy?<g className="sr-face-eyes" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round"><path d="M74 104Q82 91 90 104"/><path d="M110 99Q118 86 126 99"/></g>:<g className="sr-face-eyes">{eyes.map(([cx,cy,rx,ry],i)=><ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry} fill="#fff"/>)}</g>}
-  {expression==="focused"&&<g stroke="#fff" strokeWidth="3" strokeLinecap="round"><path d="M74 91l13 4"/><path d="M111 89l13 -4"/></g>}
-  {expression==="thoughtful"&&<path d="M91 124h15" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round"/>}
-  {expression==="concerned"&&<g fill="none" stroke="#fff" strokeLinecap="round" strokeWidth="3.5"><path d="M74 92l12 -4M112 88l12 4"/><path d="M92 126q8 -7 16 0"/></g>}
-  {happy&&<path d="M91 120q9 11 18 0" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round"/>}
-  {expression==="confident"&&<path d="M93 121q9 5 17 -3" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round"/>}
+// Always render the original two white oval eyes; only their local transforms
+// change. Independent nested blink groups keep the asymmetric logo geometry.
+const ORIGINAL_EYES=[[82,106],[118,97]];
+function eyeTransform([dx,dy,sx,sy,angle]){
+ return "translate("+dx+"px,"+dy+"px) rotate("+angle+"deg) scale("+sx+","+sy+")";
+}
+function Face({initial,final,changeAt}){
+ const start=mascotEyePose(initial),end=mascotEyePose(final);
+ return <g className="sr-face" style={{"--face-at":changeAt+"s"}}>
+  {ORIGINAL_EYES.map(([cx,cy],i)=><g key={i} transform={"translate("+cx+" "+cy+")"}>
+   <g className="sr-eye-pose" style={{"--eye-from":eyeTransform(start[i]),"--eye-to":eyeTransform(end[i])}}>
+    <g className="sr-eye-blink"><ellipse cx="0" cy="0" rx="6.5" ry="8.5" fill="#fff"/></g>
+   </g>
+  </g>)}
  </g>;
 }
 function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=false}){
  const face=mascotExpression(service,reviewRequired);
- const changes=face.initial!==face.final;
+ const changeAt=service==="automation"?4.3:3.25;
  return <g transform={"translate("+x+" "+y+")"}>
   <g transform={small?"scale(.72)":undefined}>
    <circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/>
    <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" style={{"--at":at+"s"}}>
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
-    {changes?<><Face expression={face.initial} className="sr-face-initial"/><Face expression={face.final} className="sr-face-final"/></>:<Face expression={face.initial}/>}
+    <Face initial={face.initial} final={face.final} changeAt={changeAt}/>
    </g></g>
   </g>
  </g>;
@@ -120,7 +113,7 @@ export default function StudioReel(){
  },[]);
  const running=shouldRunReel({visible,reduced,paused});
  return <div className="sr-stage" ref={root} role="region" aria-label="Lutic services showcase" aria-describedby="sr-motion-help" tabIndex={0}
-  data-running={running?"true":"false"} data-reduced={reduced?"true":"false"} style={{"--scene-duration":SCENE_SECONDS+"s"}}
+  data-running={running?"true":"false"} data-reduced={reduced?"true":"false"} style={{"--scene-duration":SCENE_SECONDS+"s","--film-pace":FILM_PACE}}
   onKeyDown={e=>{if(e.target===e.currentTarget&&!e.repeat&&(e.key===" "||e.key==="Enter")){e.preventDefault();setPaused(v=>!v);}}}>
   <span id="sr-motion-help" className="sr-visually-hidden">Automatic illustrative service showcase, not live execution. Press Space or Enter while the showcase is focused to pause or resume. Mouse hover does not interrupt playback.</span>
   <div className="sr-scene-stack">

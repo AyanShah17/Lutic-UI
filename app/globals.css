@@ -247,11 +247,11 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-scene{grid-area:1/1;display:grid;grid-template-rows:auto 1fr;align-content:start;gap:10px;min-width:0;opacity:0;visibility:hidden;pointer-events:none}
 .sr-scene-active{opacity:1;visibility:visible;pointer-events:auto;z-index:1}
 /* Fade through the card background, never crossfade two overlapping titles. */
-.sr-stage[data-reduced="false"] .sr-scene-active{animation:sr-scene-cut var(--scene-duration,5s) linear both}
+.sr-stage[data-reduced="false"] .sr-scene-active{animation:sr-scene-cut var(--scene-duration,7s) linear both}
 .sr-stage[data-running="false"] .sr-scene-active{animation-play-state:paused!important}
-@keyframes sr-scene-cut{0%{opacity:0;transform:translate3d(0,5px,0)}6%{opacity:1;transform:translate3d(0,0,0)}94%{opacity:1;transform:translate3d(0,0,0)}100%{opacity:0;transform:translate3d(0,-3px,0)}}
+@keyframes sr-scene-cut{0%{opacity:0;transform:translate3d(0,5px,0)}4.5%{opacity:1;transform:translate3d(0,0,0)}95.5%{opacity:1;transform:translate3d(0,0,0)}100%{opacity:0;transform:translate3d(0,-3px,0)}}
 .sr-scene-copy{min-height:100px}
-.sr-clock{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;animation:sr-clock var(--scene-duration,5s) linear both}
+.sr-clock{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;animation:sr-clock var(--scene-duration,7s) linear both}
 @keyframes sr-clock{from{opacity:0}to{opacity:0.01}}
 .sr-eyebrow{font-size:10px;letter-spacing:.10em;text-transform:uppercase;font-weight:600;color:var(--or)}
 .sr-scene-copy h3{font-size:clamp(22px,2.4vw,34px);line-height:1.12;letter-spacing:-.04em;font-weight:500;margin:8px 0 6px}
@@ -272,13 +272,13 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 /* Native CSS animations share the scene clock. No per-frame React render. */
 .sr-core-halo{opacity:.7}
 .sr-chart-bar{transform-box:fill-box;transform-origin:center bottom}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-wire-live{animation:sr-wire-draw var(--wire-duration,.92s) cubic-bezier(.25,.45,.2,1) var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-active rect{animation:sr-node-light .38s ease var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-active .sr-node-dot{animation:sr-dot-light .38s ease var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-check{animation:sr-appear .38s ease var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-halo{animation:sr-halo 1.8s ease-in-out var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-bar{animation:sr-bar-rise .92s cubic-bezier(.2,.7,.2,1) var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-point{animation:sr-appear .48s ease 1.2s both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-wire-live{animation:sr-wire-draw calc(var(--wire-duration,.92s) * var(--film-pace,1)) cubic-bezier(.25,.45,.2,1) calc(var(--at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-active rect{animation:sr-node-light calc(.38s * var(--film-pace,1)) ease calc(var(--at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-active .sr-node-dot{animation:sr-dot-light calc(.38s * var(--film-pace,1)) ease calc(var(--at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-check{animation:sr-appear calc(.38s * var(--film-pace,1)) ease calc(var(--at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-halo{animation:sr-halo calc(1.8s * var(--film-pace,1)) ease-in-out calc(var(--at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-bar{animation:sr-bar-rise calc(.92s * var(--film-pace,1)) cubic-bezier(.2,.7,.2,1) calc(var(--at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-point{animation:sr-appear calc(.48s * var(--film-pace,1)) ease calc(1.2s * var(--film-pace,1)) both}
 .sr-stage[data-running="false"] .sr-clock,.sr-stage[data-running="false"] .sr-scene-active *{animation-play-state:paused!important}
 @keyframes sr-wire-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:var(--end,0)}}
 @keyframes sr-node-light{from{stroke:var(--line)}to{stroke:var(--or)}}
@@ -294,25 +294,24 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-node-inactive rect{stroke:var(--line)}
 .sr-node-inactive .sr-node-dot{fill:var(--mut);opacity:.55}
 .sr-auto-outcome{font-family:Geist,system-ui,sans-serif;font-size:13px;font-weight:600;fill:var(--ink)}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-decision{animation:sr-appear .45s ease var(--at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-decision{animation:sr-appear calc(.45s * var(--film-pace,1)) ease calc(var(--at,0s) * var(--film-pace,1)) both}
 
 /* Silent cinematic treatment: only native transform/opacity motion and SVG signal strokes. */
 .sr-film-camera{transform-box:view-box;transform-origin:center}
 .sr-film-signal{stroke:var(--or);stroke-width:4;stroke-dasharray:.075 1.15;stroke-dashoffset:.075;opacity:0;pointer-events:none}
 .sr-core-art{transform-box:fill-box;transform-origin:center}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-camera{animation:sr-film-camera var(--scene-duration,5s) cubic-bezier(.2,.65,.2,1) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-signal{animation:sr-film-signal var(--signal-duration,.92s) linear var(--signal-at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art{animation:sr-film-core 1.15s cubic-bezier(.2,.7,.2,1) var(--at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-camera{animation:sr-film-camera var(--scene-duration,7s) cubic-bezier(.2,.65,.2,1) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-signal{animation:sr-film-signal calc(var(--signal-duration,.92s) * var(--film-pace,1)) linear calc(var(--signal-at,0s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art{animation:sr-film-core calc(1.15s * var(--film-pace,1)) cubic-bezier(.2,.7,.2,1) calc(var(--at,0s) * var(--film-pace,1)) both}
 @keyframes sr-film-camera{from{transform:scale(.975) translateY(2px)}to{transform:scale(1) translateY(0)}}
 @keyframes sr-film-signal{0%{opacity:0;stroke-dashoffset:.075}10%{opacity:1}88%{opacity:1}100%{opacity:0;stroke-dashoffset:-1}}
 @keyframes sr-film-core{0%,100%{transform:scale(1)}36%{transform:scale(1.07)}}
 
-/* Expressions are local to the film; official header and intro artwork stay untouched. */
-.sr-face-eyes{transform-box:fill-box;transform-origin:center}
-.sr-face-initial{opacity:0}.sr-face-final{opacity:1}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-initial{animation:sr-expression-initial var(--scene-duration,5s) linear both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-final{animation:sr-expression-final var(--scene-duration,5s) linear both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-eyes{animation:sr-eye-blink 5s ease-in-out both}
-@keyframes sr-expression-initial{0%,71%{opacity:1}72%,100%{opacity:0}}
-@keyframes sr-expression-final{0%,71%{opacity:0}72%,100%{opacity:1}}
-@keyframes sr-eye-blink{0%,25%,31%,77%,83%,100%{transform:scaleY(1)}28%,80%{transform:scaleY(.16)}}
+/* Two-eye mascot motion: preserve the exact logo silhouette and oval eye artwork.
+   Static/reduced-motion rendering uses the final pose. */
+.sr-eye-pose,.sr-eye-blink{transform-origin:0px 0px;transform-box:view-box}
+.sr-eye-pose{transform:var(--eye-to)}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-eye-pose{animation:sr-eye-express .48s cubic-bezier(.2,.75,.2,1) calc(var(--face-at,3.25s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-eye-blink{animation:sr-eye-blink var(--scene-duration,7s) linear both}
+@keyframes sr-eye-express{from{transform:var(--eye-from)}to{transform:var(--eye-to)}}
+@keyframes sr-eye-blink{0%,19%,23%,78%,82%,100%{transform:scaleY(1)}21%,80%{transform:scaleY(.12)}}
