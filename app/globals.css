@@ -234,26 +234,29 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @media(max-width:600px){.seo-related{grid-template-columns:1fr}.seo-section{padding:24px 0}}
 
 /* Lutic studio film: single frame, six cinematic scenes, continuous autoplay. */
-.studio-showcase{padding-bottom:40px}
-.studio-showcase-split{align-items:center;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:clamp(24px,5vw,68px)}
+.studio-showcase{padding-bottom:44px}
+.studio-showcase-split{align-items:center;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:clamp(24px,4.5vw,60px)}
 .studio-showcase-copy{min-width:0}
 .studio-showcase-copy .lead{margin-top:18px}
 .studio-showcase-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
 #lutic-services{scroll-margin-top:110px}
-.sr-stage{position:relative;min-width:0;display:flex;flex-direction:column;gap:14px;min-height:0;padding:clamp(16px,2.5vw,30px);border-radius:24px;background:var(--soft);border:1px solid var(--line);overflow:hidden;color:var(--ink);font-size:13px;line-height:1.4}
+.sr-stage{position:relative;min-width:0;display:flex;flex-direction:column;gap:0;min-height:0;padding:clamp(20px,2.3vw,32px);border-radius:24px;background:var(--soft);border:1px solid var(--line);overflow:hidden;color:var(--ink);font-size:13px;line-height:1.4}
 .sr-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.sr-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:var(--mut);font-weight:500;border-top:1px solid var(--line);padding-top:12px}
-.sr-stage:focus-visible,.sr-stage a:focus-visible{outline:2px solid var(--or);outline-offset:3px}
+.sr-stage:focus-visible{outline:2px solid var(--or);outline-offset:3px}
 .sr-scene-stack{display:grid;min-width:0;isolation:isolate}
-.sr-scene{grid-area:1/1;display:grid;grid-template-rows:minmax(0,auto) auto;gap:14px;min-width:0;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,5px,0);transition:opacity .42s ease,transform .42s cubic-bezier(.2,.75,.2,1),visibility 0s .42s}
-.sr-scene-active{opacity:1;visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);z-index:1;transition-delay:0s}
-.sr-scene-copy{min-height:108px}
+.sr-scene{grid-area:1/1;display:grid;grid-template-rows:auto 1fr;align-content:start;gap:10px;min-width:0;opacity:0;visibility:hidden;pointer-events:none}
+.sr-scene-active{opacity:1;visibility:visible;pointer-events:auto;z-index:1}
+/* Fade through the card background, never crossfade two overlapping titles. */
+.sr-stage[data-reduced="false"] .sr-scene-active{animation:sr-scene-cut var(--scene-duration,5s) linear both}
+.sr-stage[data-running="false"] .sr-scene-active{animation-play-state:paused!important}
+@keyframes sr-scene-cut{0%{opacity:0;transform:translate3d(0,5px,0)}6%{opacity:1;transform:translate3d(0,0,0)}94%{opacity:1;transform:translate3d(0,0,0)}100%{opacity:0;transform:translate3d(0,-3px,0)}}
+.sr-scene-copy{min-height:100px}
 .sr-clock{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;animation:sr-clock var(--scene-duration,5s) linear both}
 @keyframes sr-clock{from{opacity:0}to{opacity:0.01}}
 .sr-eyebrow{font-size:10px;letter-spacing:.10em;text-transform:uppercase;font-weight:600;color:var(--or)}
-.sr-scene-copy h3{font-size:clamp(22px,2.4vw,34px);line-height:1.12;letter-spacing:-.04em;font-weight:500;margin:9px 0 8px}
+.sr-scene-copy h3{font-size:clamp(22px,2.4vw,34px);line-height:1.12;letter-spacing:-.04em;font-weight:500;margin:8px 0 6px}
 .sr-scene-copy p{font-size:13px;color:var(--mut);line-height:1.5;margin:0;max-width:420px}
-.sr-diagram{display:block;width:100%;height:auto;aspect-ratio:540/282;color:var(--ink);overflow:visible}
+.sr-diagram{display:block;width:100%;height:auto;aspect-ratio:540/282;color:var(--ink);overflow:visible;align-self:center}
 .sr-node rect,.sr-chart-bg{fill:var(--card);stroke:var(--line);stroke-width:1.5}
 .sr-node-active rect{stroke:var(--or);stroke-width:1.8}
 .sr-node-dot{fill:var(--mut);opacity:.55}.sr-node-active .sr-node-dot{fill:var(--or);opacity:1}
@@ -263,9 +266,8 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-wire-live{stroke:var(--or);stroke-width:2.5}
 .sr-check{fill:none;stroke:var(--or);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sr-core-halo{fill:none;stroke:var(--or);stroke-width:1.5;stroke-dasharray:3 5}
-.sr-bottom{flex-wrap:wrap}.sr-bottom a{color:var(--ink);font-weight:600}.sr-bottom a:hover{color:var(--or)}
-@media(max-width:860px){.studio-showcase-split{grid-template-columns:minmax(0,1fr);gap:30px}.sr-scene-copy{min-height:98px}}
-@media(max-width:480px){.sr-stage{border-radius:20px;gap:12px}.sr-scene-copy h3{font-size:24px}.sr-scene-copy{min-height:104px}.sr-bottom{font-size:10px}}
+@media(max-width:860px){.studio-showcase-split{grid-template-columns:minmax(0,1fr);gap:30px}.sr-scene-copy{min-height:90px}}
+@media(max-width:480px){.sr-stage{border-radius:20px;gap:12px}.sr-scene-copy h3{font-size:24px}.sr-scene-copy{min-height:96px}}
 
 /* Native CSS animations share the scene clock. No per-frame React render. */
 .sr-core-halo{opacity:.7}
@@ -284,7 +286,7 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-appear{from{opacity:0}to{opacity:1}}
 @keyframes sr-halo{0%{opacity:.2}48%{opacity:1}100%{opacity:.7}}
 @keyframes sr-bar-rise{from{transform:scaleY(.04)}to{transform:scaleY(1)}}
-@media(prefers-reduced-motion:reduce){.sr-scene{transition:none;transform:none}.sr-stage .sr-scene *{animation:none!important}.sr-clock{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.sr-scene{transition:none;transform:none}.sr-stage .sr-scene-active{animation:none!important}.sr-stage .sr-scene *{animation:none!important}.sr-clock{animation:none!important}}
 
 
 /* The automation diagram uses a single bottom-center orchestration bus.
@@ -304,3 +306,13 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-film-camera{from{transform:scale(.975) translateY(2px)}to{transform:scale(1) translateY(0)}}
 @keyframes sr-film-signal{0%{opacity:0;stroke-dashoffset:.075}10%{opacity:1}88%{opacity:1}100%{opacity:0;stroke-dashoffset:-1}}
 @keyframes sr-film-core{0%,100%{transform:scale(1)}36%{transform:scale(1.07)}}
+
+/* Expressions are local to the film; official header and intro artwork stay untouched. */
+.sr-face-eyes{transform-box:fill-box;transform-origin:center}
+.sr-face-initial{opacity:0}.sr-face-final{opacity:1}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-initial{animation:sr-expression-initial var(--scene-duration,5s) linear both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-final{animation:sr-expression-final var(--scene-duration,5s) linear both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-eyes{animation:sr-eye-blink 5s ease-in-out both}
+@keyframes sr-expression-initial{0%,71%{opacity:1}72%,100%{opacity:0}}
+@keyframes sr-expression-final{0%,71%{opacity:0}72%,100%{opacity:1}}
+@keyframes sr-eye-blink{0%,25%,31%,77%,83%,100%{transform:scaleY(1)}28%,80%{transform:scaleY(.16)}}

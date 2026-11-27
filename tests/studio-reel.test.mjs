@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,30);
@@ -55,4 +55,13 @@ test("automation signals arrive in story order before the final hold",()=>{
  assert.ok(flow[2].wireAt+.58<2.46);
  assert.ok(2.46+.4<flow[4].wireAt);
  assert.ok(flow[4].wireAt+.58<SCENE_SECONDS);
+});
+
+test("every service has a distinctive mascot expression and meaningful outcome face",()=>{
+ const initial=SCENES.map(s=>mascotExpression(s.key).initial);
+ assert.equal(new Set(initial).size,SCENES.length);
+ assert.equal(mascotExpression("automation",true).final,"patient");
+ assert.equal(mascotExpression("automation",false).final,"delighted");
+ assert.equal(mascotExpression("support").final,"relieved");
+ assert.equal(mascotExpression("consulting").final,"confident");
 });
