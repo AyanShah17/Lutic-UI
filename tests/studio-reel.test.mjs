@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,AUTOMATION_TIMING} from "../lib/studio-reel.mjs";
+import {readFileSync} from "node:fs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotStoryCSS,AUTOMATION_TIMING} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,42);
@@ -66,16 +67,25 @@ test("review returns a human approval and then delivers the result",()=>{
   assert.ok(SCENE_SECONDS*.955-(result.checkAt+.38)*FILM_PACE>.9);
  }
 });
-test("every service has a distinctive mascot expression and meaningful outcome face",()=>{
- const initial=SCENES.map(s=>mascotExpression(s.key).initial);
- assert.equal(new Set(initial).size,SCENES.length);
- assert.equal(mascotExpression("automation",true).middle,"patient");
- assert.equal(mascotExpression("automation",true).final,"delighted");
- assert.equal(mascotExpression("automation",false).final,"delighted");
+test("state-based eye stories match the service workflow and its outcome",()=>{
+ const stylesheet=readFileSync(new URL("../app/globals.css",import.meta.url),"utf8");
+ for(const scene of SCENES)for(const review of [true,false]){
+  const story=mascotExpression(scene.key,review);
+  assert.equal(story.beats[0][1],0);
+  assert.ok(story.beats.length>=4);
+  for(let i=1;i<story.beats.length;i++)assert.ok(story.beats[i][1]>story.beats[i-1][1]+.20);
+  assert.equal(story.beats.at(-1)[0],story.final);
+  assert.ok((story.beats.at(-1)[1]+.20)*FILM_PACE<SCENE_SECONDS*.955);
+  assert.ok(stylesheet.includes(mascotStoryCSS(story)),story.animation+" CSS is out of sync");
+ }
+ for(const review of [true,false]){
+  const story=mascotExpression("automation",review);
+  assert.equal(story.beats.at(-1)[1],review?AUTOMATION_TIMING.reviewResultReady:AUTOMATION_TIMING.directResultReady);
+  assert.equal(story.final,"result");
+  assert.equal(story.beats.some(([state])=>state==="checking-right"),review);
+ }
  assert.equal(mascotExpression("support").final,"relieved");
- assert.equal(mascotExpression("consulting").final,"confident");
 });
-
 test("slower film holds the completed automation scene before fading out",()=>{
  const flow=automationFlow(false);
  const lastCheck=(flow[4].checkAt+.38)*FILM_PACE;
@@ -85,11 +95,11 @@ test("slower film holds the completed automation scene before fading out",()=>{
 test("all expressions preserve two subtle oval-eye transforms",()=>{
  for(const scene of SCENES)for(const review of [true,false]){
   const faces=mascotExpression(scene.key,review);
-  for(const expression of [faces.initial,faces.middle,faces.final].filter(Boolean)){
+  for(const [expression] of faces.beats){
    const pose=mascotEyePose(expression);assert.equal(pose.length,2);
    for(const [dx,dy,sx,sy,angle] of pose){
-    assert.ok(Math.abs(dx)<=3&&Math.abs(dy)<=3);
-    assert.ok(sx>=.9&&sx<=1.15&&sy>=.6&&sy<=1.25&&Math.abs(angle)<=12);
+    assert.ok(Math.abs(dx)<=4&&Math.abs(dy)<=4);
+    assert.ok(sx>=.9&&sx<=1.15&&sy>=.6&&sy<=1.35&&Math.abs(angle)<=12);
    }
   }
  }

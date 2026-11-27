@@ -25,26 +25,28 @@ const ORIGINAL_EYES=[[82,106],[118,97]];
 function eyeTransform([dx,dy,sx,sy,angle]){
  return "translate("+dx+"px,"+dy+"px) rotate("+angle+"deg) scale("+sx+","+sy+")";
 }
-function Face({initial,middle,final,changeAt}){
- const start=mascotEyePose(initial),end=mascotEyePose(final),mid=middle?mascotEyePose(middle):null;
- return <g className={"sr-face"+(mid?" sr-face-review":"")} style={{"--face-at":changeAt+"s"}}>
-  {ORIGINAL_EYES.map(([cx,cy],i)=><g key={i} transform={"translate("+cx+" "+cy+")"}>
-   <g className="sr-eye-pose" style={{"--eye-from":eyeTransform(start[i]),"--eye-to":eyeTransform(end[i]),"--eye-middle":eyeTransform(mid?mid[i]:end[i])}}>
-    <g className="sr-eye-blink"><ellipse cx="0" cy="0" rx="6.5" ry="8.5" fill="#fff"/></g>
-   </g>
-  </g>)}
+function Face({story}){
+ const states=[...new Set(story.beats.map(([state])=>state))];
+ return <g className="sr-face" style={{"--eye-story":story.animation}}>
+  {ORIGINAL_EYES.map(([cx,cy],i)=>{
+   const variables=Object.fromEntries(states.map(state=>["--eye-"+state,eyeTransform(mascotEyePose(state)[i])]));
+   return <g key={i} transform={"translate("+cx+" "+cy+")"}>
+    <g className="sr-eye-pose" style={{...variables,"--eye-to":eyeTransform(mascotEyePose(story.final)[i])}}>
+     <g className="sr-eye-blink"><ellipse cx="0" cy="0" rx="6.5" ry="8.5" fill="#fff"/></g>
+    </g>
+   </g>;
+  })}
  </g>;
 }
 function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=false}){
  const face=mascotExpression(service,reviewRequired);
- const changeAt=service==="automation"?AUTOMATION_TIMING.directResultReady:3.25;
  return <g transform={"translate("+x+" "+y+")"}>
   <g transform={small?"scale(.86)":undefined}>
    <circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/>
    <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" data-service={service} style={{"--at":at+"s"}}>
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
-    <Face initial={face.initial} middle={face.middle} final={face.final} changeAt={changeAt}/>
+    <Face story={face}/>
    </g></g>
   </g>
  </g>;

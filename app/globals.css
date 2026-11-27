@@ -306,22 +306,24 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-film-signal{0%{opacity:0;stroke-dashoffset:.075}10%{opacity:1}88%{opacity:1}100%{opacity:0;stroke-dashoffset:-1}}
 @keyframes sr-film-core{0%,100%{transform:scale(1)}36%{transform:scale(1.07)}}
 
-/* Two-eye mascot motion: preserve the exact logo silhouette and oval eye artwork.
-   Static/reduced-motion rendering uses the final pose. */
+/* Original two-eye mascot: a workflow-synchronized performance per scene.
+   Reduced-motion rendering shows the completed expression without animation. */
 .sr-eye-pose,.sr-eye-blink{transform-origin:0px 0px;transform-box:view-box}
 .sr-eye-pose{transform:var(--eye-to)}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-eye-pose{animation:sr-eye-express .48s cubic-bezier(.2,.75,.2,1) calc(var(--face-at,3.25s) * var(--film-pace,1)) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-eye-pose{animation:var(--eye-story) var(--scene-duration,7s) cubic-bezier(.25,.7,.25,1) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-eye-blink{animation:sr-eye-blink var(--scene-duration,7s) linear both}
-@keyframes sr-eye-express{from{transform:var(--eye-from)}to{transform:var(--eye-to)}}
-@keyframes sr-eye-blink{0%,19%,23%,78%,82%,100%{transform:scaleY(1)}21%,80%{transform:scaleY(.12)}}
-
+@keyframes sr-eye-blink{0%,14%,17%,84%,87%,100%{transform:scaleY(1)}15.5%,85.5%{transform:scaleY(.12)}}
+/* Generated from mascotStoryCSS and the workflow timings in studio-reel.mjs. */
+@keyframes sr-eye-story-solutions{0%{transform:var(--eye-checking)}15.1786%{transform:var(--eye-checking)}18.75%{transform:var(--eye-checking-right)}25.8929%{transform:var(--eye-checking-right)}29.4643%{transform:var(--eye-thinking)}38.9286%{transform:var(--eye-thinking)}42.5%{transform:var(--eye-working)}55.8929%{transform:var(--eye-working)}59.4643%{transform:var(--eye-result)}100%{transform:var(--eye-result)}}
+@keyframes sr-eye-story-automation-review{0%{transform:var(--eye-alerted)}14.6429%{transform:var(--eye-alerted)}18.2143%{transform:var(--eye-thinking)}26.4286%{transform:var(--eye-thinking)}30%{transform:var(--eye-working)}42.8571%{transform:var(--eye-working)}46.4286%{transform:var(--eye-checking)}52.8571%{transform:var(--eye-checking)}56.4286%{transform:var(--eye-checking-right)}66.4286%{transform:var(--eye-checking-right)}70%{transform:var(--eye-working)}75%{transform:var(--eye-working)}78.5714%{transform:var(--eye-result)}100%{transform:var(--eye-result)}}
+@keyframes sr-eye-story-automation-direct{0%{transform:var(--eye-alerted)}14.6429%{transform:var(--eye-alerted)}18.2143%{transform:var(--eye-thinking)}26.4286%{transform:var(--eye-thinking)}30%{transform:var(--eye-working)}42.8571%{transform:var(--eye-working)}46.4286%{transform:var(--eye-checking)}54.6429%{transform:var(--eye-checking)}58.2143%{transform:var(--eye-result)}100%{transform:var(--eye-result)}}
+@keyframes sr-eye-story-autonomy{0%{transform:var(--eye-alerted)}12.1429%{transform:var(--eye-alerted)}15.7143%{transform:var(--eye-thinking)}21.0714%{transform:var(--eye-thinking)}24.6429%{transform:var(--eye-working)}38.9286%{transform:var(--eye-working)}42.5%{transform:var(--eye-checking)}58.9286%{transform:var(--eye-checking)}62.5%{transform:var(--eye-result)}100%{transform:var(--eye-result)}}
+@keyframes sr-eye-story-consulting{0%{transform:var(--eye-checking)}15.1786%{transform:var(--eye-checking)}18.75%{transform:var(--eye-thinking)}29.4643%{transform:var(--eye-thinking)}33.0357%{transform:var(--eye-working)}41.9643%{transform:var(--eye-working)}45.5357%{transform:var(--eye-checking-right)}55.8929%{transform:var(--eye-checking-right)}59.4643%{transform:var(--eye-result)}100%{transform:var(--eye-result)}}
+@keyframes sr-eye-story-integrations{0%{transform:var(--eye-checking)}11.6071%{transform:var(--eye-checking)}15.1786%{transform:var(--eye-working)}30.3571%{transform:var(--eye-working)}33.9286%{transform:var(--eye-checking-right)}38.9286%{transform:var(--eye-checking-right)}42.5%{transform:var(--eye-working)}61.7857%{transform:var(--eye-working)}65.3571%{transform:var(--eye-result)}100%{transform:var(--eye-result)}}
+@keyframes sr-eye-story-support{0%{transform:var(--eye-alerted)}13.3929%{transform:var(--eye-alerted)}16.9643%{transform:var(--eye-checking)}24.1071%{transform:var(--eye-checking)}27.6786%{transform:var(--eye-thinking)}38.9286%{transform:var(--eye-thinking)}42.5%{transform:var(--eye-working)}55.8929%{transform:var(--eye-working)}59.4643%{transform:var(--eye-relieved)}100%{transform:var(--eye-relieved)}}
 
 /* Keep the original mascot anchored to the orchestration bus. */
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art[data-service="automation"]{animation:none}
 .sr-auto-wait{opacity:0}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-wait{animation:sr-auto-wait calc((var(--wait-duration) + .1s) * var(--film-pace,1)) linear calc(var(--wait-at) * var(--film-pace,1)) both}
 @keyframes sr-auto-wait{0%{opacity:0}15%,80%{opacity:1}100%{opacity:0}}
-/* Two original oval eyes move through focus, patience and satisfaction.
-   No mouth, brows, costumes, or changes to the silhouette. */
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-face-review .sr-eye-pose{animation:sr-eye-review var(--scene-duration,7s) cubic-bezier(.25,.7,.25,1) both}
-@keyframes sr-eye-review{0%,42%{transform:var(--eye-from)}47%,60%{transform:var(--eye-middle)}75%,100%{transform:var(--eye-to)}}
