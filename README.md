@@ -89,3 +89,5 @@ Homepage reloads without a hash now disable browser history scroll restoration i
 ## Search result branding
 
 The original Lutic mascot is available as a 192×192 PNG at `/favicon.png` (stable favicon and organization logo) and as SVG at `/icon.svg`. The root metadata explicitly declares the PNG and the WebSite schema names Lutic as the preferred site name. After deployment, verify the favicon link and PNG response with `npm run check:seo -- https://lutic.app`, then request a homepage recrawl in Search Console. Google determines actual favicon, site name, title and snippet display; updates can take days to weeks.
+
+The agentic automation scene uses a shared bottom-center mascot connection to Request, Plan, Tools, Review and Result. The incoming request travels toward the mascot; subsequent calls travel outward. Successive reel cycles alternate an example that waits for human review with one that returns a result directly. The unused branch remains neutral; these are illustrative scenarios, not live execution.

@@ -274,9 +274,9 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 /* Native CSS animations share the scene clock. No per-frame React render. */
 .sr-core-halo{opacity:.7}
 .sr-chart-bar{transform-box:fill-box;transform-origin:center bottom}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-wire-live{animation:sr-wire-draw .92s cubic-bezier(.25,.45,.2,1) var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-node rect{animation:sr-node-light .38s ease var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-dot{animation:sr-dot-light .38s ease var(--at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-wire-live{animation:sr-wire-draw var(--wire-duration,.92s) cubic-bezier(.25,.45,.2,1) var(--at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-active rect{animation:sr-node-light .38s ease var(--at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-node-active .sr-node-dot{animation:sr-dot-light .38s ease var(--at,0s) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-check{animation:sr-appear .38s ease var(--at,0s) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-core-halo{animation:sr-halo 1.8s ease-in-out var(--at,0s) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-bar{animation:sr-bar-rise .92s cubic-bezier(.2,.7,.2,1) var(--at,0s) both}
@@ -294,3 +294,10 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-step-text{from{opacity:.55}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.sr-scene{transition:none;transform:none}.sr-stage .sr-scene *{animation:none!important}.sr-clock{animation:none!important}}
 
+
+/* The automation diagram uses a single bottom-center orchestration bus.
+   Unchosen terminal branch stays neutral, and only the chosen outcome animates. */
+.sr-node-inactive rect{stroke:var(--line)}
+.sr-node-inactive .sr-node-dot{fill:var(--mut);opacity:.55}
+.sr-auto-outcome{font-family:Geist,system-ui,sans-serif;font-size:13px;font-weight:600;fill:var(--ink)}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-decision{animation:sr-appear .45s ease var(--at,0s) both}

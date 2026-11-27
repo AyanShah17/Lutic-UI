@@ -1,17 +1,17 @@
 "use client";
 import Link from "next/link";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,nextSceneIndex,shouldRunReel} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,nextReelState,shouldRunReel,automationFlow} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and step captions.
-function Node({x,y,w=142,h=64,label,detail,at=0,mark="dot"}){
- return <g className="sr-node sr-node-active" style={{"--at":at+"s"}}>
+function Node({x,y,w=142,h=64,label,detail,at=0,mark="dot",enabled=true}){
+ return <g className={enabled?"sr-node sr-node-active":"sr-node sr-node-inactive"} style={{"--at":at+"s"}}>
   <rect x={x} y={y} width={w} height={h} rx="13"/>
   <circle cx={x+17} cy={y+19} r="4" className="sr-node-dot"/>
   <text x={x+29} y={y+23} className="sr-node-label">{label}</text>
   {detail&&<text x={x+15} y={y+44} className="sr-node-detail">{detail}</text>}
-  {mark==="check"&&<path d={"M"+(x+w-23)+" "+(y+43)+"l4 4 7 -8"} className="sr-check" style={{"--at":(at+.4)+"s"}}/>}
+  {enabled&&mark==="check"&&<path d={"M"+(x+w-23)+" "+(y+43)+"l4 4 7 -8"} className="sr-check" style={{"--at":(at+.4)+"s"}}/>}
  </g>;
 }
 function Wire({d,at=0,partial=false}){
@@ -20,16 +20,27 @@ function Wire({d,at=0,partial=false}){
 function Core({x=270,y=141,at=0}){
  return <g transform={"translate("+x+" "+y+")"}><circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/><g className="sr-core-art" transform="scale(.39) translate(-100 -100)"><polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/><circle cx="100" cy="100" r="52" fill="#101012"/><ellipse cx="82" cy="106" rx="6.5" ry="8.5" fill="#fff"/><ellipse cx="118" cy="97" rx="6.5" ry="8.5" fill="#fff"/></g></g>;
 }
-function Diagram({scene}){
- return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={scene.description}>
+function AutomationFlow({reviewRequired}){
+ const nodes=automationFlow(reviewRequired);
+ return <>
+  <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+   {nodes.map(n=><path key={n.key+"-base"} d={n.d} className="sr-wire-base"/>)}
+   {nodes.filter(n=>n.enabled).map(n=><path key={n.key+"-live"} d={n.d} pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":n.wireAt+"s","--wire-duration":".58s"}} className="sr-wire-live"/>)}
+  </g>
+  <Core x={270} y={49} at={.25}/>
+  {nodes.map(n=><Node key={n.key} x={n.x} y={137} w={100} h={64} label={n.label} detail={n.detail} at={n.at} enabled={n.enabled} mark={n.key==="result"?"check":"dot"}/>)}
+  <g className="sr-auto-decision" style={{"--at":"2.48s"}}>
+   <text x="270" y="232" textAnchor="middle" className="sr-auto-outcome">{reviewRequired?"Review required · awaiting approval":"No review required · result ready"}</text>
+   <text x="270" y="250" textAnchor="middle" className="sr-caption">{reviewRequired?"Restricted actions wait for a human decision":"Permitted actions complete within policy"}</text>
+  </g>
+ </>;
+}
+function Diagram({scene,reviewRequired}){
+ return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={scene.key==="automation"?scene.description+(reviewRequired?" This example requires review.":" This example returns a result directly."):scene.description}>
  {scene.key==="solutions"?<>
  <Wire d="M162 65H205Q220 65 220 80V102L235 120" at={0.18}/><Wire d="M162 217H205Q220 217 220 202V180L235 162" at={1.18}/><Wire d="M309 141H375" at={2.18}/>
  <Node x={20} y={33} label="Question" detail="Natural language" at={0.26}/><Node x={20} y={185} label="Knowledge" detail="Approved documents" at={1.26}/><Core at={1.18}/><Node x={375} y={108} w={145} h={74} label="AI answer" detail="Sources attached" at={2.35} mark="check"/>
- </>:scene.key==="automation"?<>
- <Wire d="M111 140H143" at={0.18}/><Wire d="M235 140H276" at={1.18}/><Wire d="M368 140H407" at={2.18}/>
- <Node x={15} y={108} w={96} label="Request" detail="New task" at={0.26}/><Node x={143} y={108} w={92} label="Plan" detail="Steps" at={0.68}/><Node x={276} y={108} w={92} label="Tools" detail="Scoped API" at={1.52}/><Node x={407} y={108} w={118} label="Approval" detail="Human review" at={2.43}/>
- <Wire d="M270 65V82Q270 90 278 90H314Q322 90 322 98V108" at={1.18}/><Core x={270} y={41} at={1.18}/><text x="270" y="240" textAnchor="middle" className="sr-caption">Policy checks before consequential actions</text>
- </>:scene.key==="autonomy"?<>
+ </>:scene.key==="automation"?<AutomationFlow reviewRequired={reviewRequired}/>:scene.key==="autonomy"?<>
  <Wire d="M196 57H344" at={0.18}/><Wire d="M416 89V193" at={1.18}/><Wire d="M344 225H196" at={2.18}/><Wire d="M124 193V89" at={2.18} partial/>
  <Node x={52} y={25} w={144} label="Observe" detail="Event received" at={0.26}/><Node x={344} y={25} w={144} label="Decide" detail="Check policy" at={0.68}/><Node x={344} y={193} w={144} label="Act" detail="Bounded action" at={1.52}/><Node x={52} y={193} w={144} label="Verify" detail="Check outcome" at={2.52} mark="check"/><Core at={2.18}/>
  </>:scene.key==="consulting"?<>
@@ -48,16 +59,17 @@ function Diagram({scene}){
  </>}
  </svg>;
 }
-const Scene=memo(function Scene({scene,active}){
+const Scene=memo(function Scene({scene,active,reviewRequired}){
+ const steps=scene.key==="automation"?["Plan the task","Call tools for actions",reviewRequired?"Request human review":"Return the result"]:scene.steps;
  return <div className={"sr-scene"+(active?" sr-scene-active":"")} aria-hidden={!active}>
   <div className="sr-scene-copy"><span className="sr-eyebrow">{scene.label}</span><h3>{scene.title}</h3><p>{scene.description}</p></div>
-  <Diagram scene={scene}/>
-  <div className="sr-steps" aria-label="Workflow steps">{scene.steps.map((label,i)=><span className="sr-step" key={label} style={{"--at":(.16+i*1.02)+"s"}}><i>{i+1}</i>{label}</span>)}</div>
+  <Diagram scene={scene} reviewRequired={reviewRequired}/>
+  <div className="sr-steps" aria-label="Workflow steps">{steps.map((label,i)=><span className="sr-step" key={label} style={{"--at":(.16+i*1.02)+"s"}}><i>{i+1}</i>{label}</span>)}</div>
  </div>;
 });
 export default function StudioReel(){
  const root=useRef(null);
- const [index,setIndex]=useState(0),[visible,setVisible]=useState(false),[reduced,setReduced]=useState(true),[paused,setPaused]=useState(false),[keyboardLinkFocus,setKeyboardLinkFocus]=useState(false);
+ const [{index,reviewRequired},setReel]=useState({index:0,reviewRequired:true}),[visible,setVisible]=useState(false),[reduced,setReduced]=useState(true),[paused,setPaused]=useState(false),[keyboardLinkFocus,setKeyboardLinkFocus]=useState(false);
  useEffect(()=>{
   const media=window.matchMedia("(prefers-reduced-motion: reduce)");
   const preference=()=>setReduced(media.matches);
@@ -76,9 +88,9 @@ export default function StudioReel(){
   onKeyDown={e=>{if(e.target===e.currentTarget&&!e.repeat&&(e.key===" "||e.key==="Enter")){e.preventDefault();setPaused(v=>!v);}}}>
   <span id="sr-motion-help" className="sr-visually-hidden">Automatic service showcase. Press Space or Enter while the showcase is focused to pause or resume. Mouse hover does not interrupt playback.</span>
   <div className="sr-scene-stack">
-   {SCENES.map((s,i)=><Scene key={s.key} scene={s} active={i===index}/>)}
+   {SCENES.map((s,i)=><Scene key={s.key} scene={s} active={i===index} reviewRequired={s.key==="automation"?reviewRequired:undefined}/>)}
   </div>
-  {!reduced&&<span key={index} className="sr-clock" aria-hidden="true" onAnimationEnd={e=>{if(e.target===e.currentTarget&&e.animationName==="sr-clock")setIndex(nextSceneIndex);}}/>}
+  {!reduced&&<span key={index} className="sr-clock" aria-hidden="true" onAnimationEnd={e=>{if(e.target===e.currentTarget&&e.animationName==="sr-clock")setReel(nextReelState);}}/>}
   <div className="sr-bottom"><span>Illustrative workflows · not live data</span><Link href={scene.href} onFocus={e=>setKeyboardLinkFocus(e.currentTarget.matches(":focus-visible"))} onBlur={()=>setKeyboardLinkFocus(false)}>Explore service <span aria-hidden="true">↗</span></Link></div>
   <span className="sr-visually-hidden" role="status">{paused?"Automatic animation paused.":"Automatic animation enabled."}</span>
  </div>;

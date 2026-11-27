@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,24);
@@ -26,4 +26,24 @@ test("hover or incidental pointer focus cannot freeze visible autoplay",()=>{
  assert.equal(shouldRunReel({visible:true,hovered:true,focused:true}),true);
  for(const flags of [{visible:false},{visible:true,reduced:true},{visible:true,paused:true},{visible:true,keyboardLinkFocus:true}])assert.equal(shouldRunReel(flags),false);
  assert.equal(shouldRunReel({visible:true,paused:false}),true);
+});
+
+test("automation connects every stage to the bottom-center mascot port",()=>{
+ for(const reviewRequired of [true,false]){
+  const nodes=automationFlow(reviewRequired);
+  assert.deepEqual(nodes.map(n=>n.key),["request","plan","tools","review","result"]);
+  assert.ok(nodes.every(n=>n.d.includes("270 73")||n.d.endsWith("V73")));
+  assert.ok(nodes.slice(0,3).every(n=>n.enabled));
+  assert.equal(nodes[3].enabled,reviewRequired);
+  assert.equal(nodes[4].enabled,!reviewRequired);
+  assert.ok(nodes.every(n=>n.x>=0&&n.x+100<=540));
+  assert.ok(nodes.every(n=>n.wireAt+.58<SCENE_SECONDS));
+ }
+});
+test("each reel cycle alternates the review-required and direct-result examples",()=>{
+ let state={index:0,reviewRequired:true};
+ for(let i=0;i<6;i++)state=nextReelState(state);
+ assert.deepEqual(state,{index:0,reviewRequired:false});
+ for(let i=0;i<6;i++)state=nextReelState(state);
+ assert.deepEqual(state,{index:0,reviewRequired:true});
 });
