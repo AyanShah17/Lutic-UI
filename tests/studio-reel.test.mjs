@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotPersona} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,42);
@@ -83,4 +83,13 @@ test("all expressions preserve two subtle oval-eye transforms",()=>{
    }
   }
  }
+});
+
+test("six service-specific mascot personas have distinct costumes",()=>{
+ const personas=SCENES.map(s=>mascotPersona(s.key));
+ assert.equal(new Set(personas.map(p=>p.accessory)).size,6);
+ assert.equal(new Set(personas.map(p=>p.name)).size,6);
+ assert.equal(mascotPersona("support").accessory,"headset");
+ assert.equal(mascotPersona("consulting").accessory,"helmet");
+ assert.throws(()=>mascotPersona("unknown"));
 });

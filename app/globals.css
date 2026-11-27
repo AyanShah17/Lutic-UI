@@ -315,3 +315,12 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-eye-blink{animation:sr-eye-blink var(--scene-duration,7s) linear both}
 @keyframes sr-eye-express{from{transform:var(--eye-from)}to{transform:var(--eye-to)}}
 @keyframes sr-eye-blink{0%,19%,23%,78%,82%,100%{transform:scaleY(1)}21%,80%{transform:scaleY(.12)}}
+
+/* Service costumes attach to the mascot, never to the official brand logo. */
+.sr-costume{pointer-events:none;transform-box:fill-box;transform-origin:center}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-costume{animation:sr-costume-enter .46s cubic-bezier(.2,.75,.2,1) .12s both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-pulse{animation:sr-persona-pulse 2.4s ease-in-out .5s 2 both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-scan{animation:sr-persona-scan 1.8s ease-in-out .65s 2 both}
+@keyframes sr-costume-enter{from{opacity:0;transform:translateY(-5px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes sr-persona-pulse{0%,100%{opacity:.8}50%{opacity:1}70%{opacity:.4}}
+@keyframes sr-persona-scan{0%,100%{transform:translateY(0);opacity:.25}50%{transform:translateY(12px);opacity:.85}}

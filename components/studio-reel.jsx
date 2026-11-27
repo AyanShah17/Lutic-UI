@@ -1,6 +1,6 @@
 "use client";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,mascotPersona} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and moving signals.
@@ -35,16 +35,57 @@ function Face({initial,final,changeAt}){
   </g>)}
  </g>;
 }
+// All costume artwork is in the same 200-unit coordinate space as the
+// original logo. Accessories stay within the existing halo and leave the
+// lower-center connection port unobstructed.
+function Costume({accessory}){
+ return <g className="sr-costume" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round">
+  {accessory==="glasses"?<>
+   <g fill="none" stroke="#f4eee8" strokeWidth="4">
+    <rect x="64" y="88" width="35" height="31" rx="10" transform="rotate(-8 81.5 103.5)"/>
+    <rect x="101" y="81" width="35" height="31" rx="10" transform="rotate(-8 118.5 96.5)"/>
+    <path d="M99 99l5 -1M64 102l-10 -2M136 94l9 -3"/>
+   </g>
+   <path d="M72 93l8 -2M109 86l8 -2" fill="none" stroke="#ee5414" strokeWidth="2.5" opacity=".9"/>
+  </>:accessory==="antenna"?<>
+   <g fill="#101012" stroke="#f4eee8" strokeWidth="3.5"><rect x="87" y="26" width="26" height="16" rx="7"/><path d="M100 26V13" fill="none"/><circle cx="100" cy="10" r="7" fill="#ee5414"/></g>
+   <g className="sr-persona-pulse" fill="none" stroke="#ee5414" strokeWidth="3"><path d="M85 11Q85 0 100 0Q115 0 115 11"/><path d="M79 15Q79 -7 100 -7Q121 -7 121 15" opacity=".6"/></g>
+  </>:accessory==="visor"?<>
+   <path d="M55 85Q100 69 145 85L145 108Q100 123 55 108Z" fill="#ee5414" fillOpacity=".12" stroke="#f4eee8" strokeWidth="3.5"/>
+   <path d="M60 89l16 -5M125 112l14 -4" stroke="#ee5414" strokeWidth="3" fill="none"/>
+   <path className="sr-persona-scan" d="M58 94Q100 84 142 94" stroke="#f4eee8" strokeOpacity=".7" strokeWidth="2" fill="none"/>
+  </>:accessory==="helmet"?<>
+   <path d="M49 57Q49 16 96 16Q144 16 151 57L158 65H42Z" fill="#f4eee8" stroke="#101012" strokeWidth="4"/>
+   <path d="M87 19Q83 36 83 54M108 19Q112 36 112 54" fill="none" stroke="#ee5414" strokeWidth="5"/>
+   <path d="M43 64h114" stroke="#ee5414" strokeWidth="7"/>
+   <rect x="91" y="43" width="18" height="8" rx="3" fill="#ee5414"/>
+  </>:accessory==="ports"?<>
+   <g fill="#101012" stroke="#f4eee8" strokeWidth="3.5">
+    <rect x="20" y="87" width="25" height="26" rx="7"/><rect x="155" y="87" width="25" height="26" rx="7"/>
+    <path d="M20 95H9M20 105H9M180 95H191M180 105H191" fill="none"/>
+   </g>
+   <g className="sr-persona-pulse" fill="#ee5414"><circle cx="32.5" cy="100" r="4.5"/><circle cx="167.5" cy="100" r="4.5"/></g>
+  </>:accessory==="headset"?<>
+   <path d="M39 100V79Q39 30 100 30Q161 30 161 79V100" fill="none" stroke="#f4eee8" strokeWidth="6"/>
+   <g fill="#101012" stroke="#f4eee8" strokeWidth="3.5"><rect x="27" y="88" width="20" height="34" rx="8"/><rect x="153" y="88" width="20" height="34" rx="8"/></g>
+   <path d="M163 121Q159 140 133 140" fill="none" stroke="#f4eee8" strokeWidth="4"/>
+   <rect x="122" y="135" width="16" height="10" rx="5" fill="#ee5414" stroke="#f4eee8" strokeWidth="2"/>
+   <circle className="sr-persona-pulse" cx="163" cy="105" r="4" fill="#ee5414"/>
+  </>:null}
+ </g>;
+}
 function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=false}){
  const face=mascotExpression(service,reviewRequired);
+ const persona=mascotPersona(service);
  const changeAt=service==="automation"?4.3:3.25;
  return <g transform={"translate("+x+" "+y+")"}>
   <g transform={small?"scale(.72)":undefined}>
    <circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/>
-   <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" style={{"--at":at+"s"}}>
+   <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" data-persona={persona.accessory} style={{"--at":at+"s"}}>
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
     <Face initial={face.initial} final={face.final} changeAt={changeAt}/>
+    <Costume accessory={persona.accessory}/>
    </g></g>
   </g>
  </g>;
@@ -66,7 +107,7 @@ function AutomationFlow({reviewRequired}){
  </>;
 }
 function Diagram({scene,reviewRequired}){
- return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={scene.key==="automation"?scene.description+(reviewRequired?" This example requires review.":" This example returns a result directly."):scene.description}>
+ return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={mascotPersona(scene.key).name+". "+(scene.key==="automation"?scene.description+(reviewRequired?" This example requires review.":" This example returns a result directly."):scene.description)}>
  <g className="sr-film-camera">
  {scene.key==="solutions"?<>
  <Wire d="M162 65H205Q220 65 220 80V102L235 120" at={0.18}/><Wire d="M162 217H205Q220 217 220 202V180L235 162" at={1.18}/><Wire d="M309 141H375" at={2.18}/>
