@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotStoryCSS,expressionLineBeats,AUTOMATION_TIMING} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotStoryCSS,expressionLineBeats,AUTOMATION_TIMING,mascotGazeStory,mascotGazeCSS,mascotGazeSignals,gazePathPoints,gazePathSample,gazeOffsetAt,MASCOT_CENTERS} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,42);
@@ -123,4 +123,29 @@ test("head accents follow every eye beat without overlapping or preceding the ou
   assert.equal(mark.state,"result");
   assert.ok(mark.delay>=(review?AUTOMATION_TIMING.reviewResultReady:AUTOMATION_TIMING.directResultReady));
  }
+});
+
+test("gaze follows the actual signal paths and settles before the scene ends",()=>{
+ const stylesheet=readFileSync(new URL("../app/globals.css",import.meta.url),"utf8");
+ for(const scene of SCENES)for(const review of [true,false]){
+  const gaze=mascotGazeStory(scene.key,review);
+  assert.deepEqual(gaze.frames[0].offset,[0,0]);
+  assert.deepEqual(gaze.frames.at(-1).offset,[0,0]);
+  assert.ok(gaze.frames.some(f=>Math.hypot(...f.offset)>3));
+  assert.ok(gaze.frames.every(f=>Math.abs(f.offset[0])<=11.00001&&Math.abs(f.offset[1])<=10.00001));
+  assert.ok(stylesheet.includes(mascotGazeCSS(gaze)));
+ }
+ const signal=(service,review,index)=>{const s=mascotGazeSignals(service,review)[index];return {...s,points:gazePathPoints(s.d)};};
+ const offset=(service,s,progress)=>gazeOffsetAt([s],MASCOT_CENTERS[service],s.at+s.duration*progress);
+ const question=signal("solutions",true,0),knowledge=signal("solutions",true,1);
+ assert.ok(offset("solutions",question,.5)[0]<0&&offset("solutions",question,.5)[1]<0);
+ assert.ok(offset("solutions",knowledge,.5)[0]<0&&offset("solutions",knowledge,.5)[1]>0);
+ const request=signal("automation",true,0);
+ assert.ok(offset("automation",request,.25)[0]<0&&offset("automation",request,.25)[1]>0);
+ assert.ok(Math.abs(offset("automation",request,.85)[0])<Math.abs(offset("automation",request,.25)[0]));
+ const returns=mascotGazeSignals("automation",true);
+ const approval={...returns.at(-1),points:gazePathPoints(returns.at(-1).d)};
+ assert.ok(offset("automation",approval,.3)[0]>0&&offset("automation",approval,.3)[1]>0);
+ assert.equal(mascotGazeSignals("automation",false).some(s=>s.d===approval.d),false);
+ assert.deepEqual(gazePathSample(gazePathPoints("M0 0H10V10"),.75),[10,5]);
 });

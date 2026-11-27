@@ -1,6 +1,6 @@
 "use client";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,expressionLineBeats,AUTOMATION_TIMING} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,expressionLineBeats,AUTOMATION_TIMING,REEL_CONNECTIONS,SUPPORT_CHART_SIGNAL,automationReturnSignals,mascotGazeStory} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and moving signals.
@@ -32,9 +32,9 @@ function ExpressionLines({story}){
   </g>)}
  </g>;
 }
-function Face({story}){
+function Face({story,gaze}){
  const states=[...new Set(story.beats.map(([state])=>state))];
- return <g className="sr-face" style={{"--eye-story":story.animation}}>
+ return <g className="sr-face" style={{"--eye-story":story.animation,"--gaze-story":gaze.animation}}>
   {ORIGINAL_EYES.map(([cx,cy],i)=>{
    const variables=Object.fromEntries(states.map(state=>["--eye-"+state,eyeTransform(mascotEyePose(state)[i])]));
    return <g key={i} transform={"translate("+cx+" "+cy+")"}>
@@ -47,6 +47,7 @@ function Face({story}){
 }
 function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=false}){
  const face=mascotExpression(service,reviewRequired);
+ const gaze=mascotGazeStory(service,reviewRequired);
  return <g transform={"translate("+x+" "+y+")"}>
   <g transform={small?"scale(.86)":undefined}>
    <circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/>
@@ -54,7 +55,7 @@ function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=fa
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
     <ExpressionLines story={face}/>
-    <Face story={face}/>
+    <Face story={face} gaze={gaze}/>
    </g></g>
   </g>
  </g>;
@@ -66,8 +67,7 @@ function AutomationFlow({reviewRequired}){
   <g fill="none" strokeLinecap="round" strokeLinejoin="round">
    {nodes.map(n=><path key={n.key+"-base"} d={n.d} className="sr-wire-base"/>)}
    {nodes.filter(n=>n.enabled).map(n=><g key={n.key+"-live"}><path d={n.d} pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":n.wireAt+"s","--wire-duration":n.wireDuration+"s"}} className="sr-wire-live"/><Signal d={n.d} at={n.wireAt} duration={n.wireDuration}/></g>)}
-   <Signal d="M270 137V73" at={t.toolReturn.at} duration={t.toolReturn.duration}/>
-   {reviewRequired&&<Signal d="M376 137V116Q376 104 364 104H282Q270 104 270 92V73" at={t.approval.at} duration={t.approval.duration}/>}
+   {automationReturnSignals(reviewRequired).map(s=><Signal key={s.d} {...s}/>)}
   </g>
   <Core x={270} y={49} at={.72} service="automation" reviewRequired={reviewRequired}/>
   {nodes.map(n=><Node key={n.key} x={n.x} y={137} w={100} h={64} label={n.label} detail={n.detail} at={n.at} checkAt={n.checkAt} enabled={n.enabled} mark={n.key==="result"||n.key==="review"?"check":"dot"}/>)}
@@ -84,23 +84,23 @@ function Diagram({scene,reviewRequired}){
  return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={scene.key==="automation"?scene.description+(reviewRequired?" In this example, a human approves the review before the agent returns the result.":" This example returns a result directly."):scene.description}>
  <g className="sr-film-camera">
  {scene.key==="solutions"?<>
- <Wire d="M162 65H205Q220 65 220 80V102L235 120" at={0.18}/><Wire d="M162 217H205Q220 217 220 202V180L235 162" at={1.18}/><Wire d="M309 141H375" at={2.18}/>
+ <Wire {...REEL_CONNECTIONS.solutions[0]}/><Wire {...REEL_CONNECTIONS.solutions[1]}/><Wire {...REEL_CONNECTIONS.solutions[2]}/>
  <Node x={20} y={33} label="Question" detail="Natural language" at={0.26}/><Node x={20} y={185} label="Knowledge" detail="Approved documents" at={1.26}/><Core at={1.18} service="solutions"/><Node x={375} y={108} w={145} h={74} label="AI answer" detail="Sources attached" at={2.35} mark="check"/>
  </>:scene.key==="automation"?<AutomationFlow reviewRequired={reviewRequired}/>:scene.key==="autonomy"?<>
- <Wire d="M196 57H344" at={0.18}/><Wire d="M416 89V193" at={1.18}/><Wire d="M344 225H196" at={2.18}/><Wire d="M124 193V89" at={2.18} partial/>
+ <Wire {...REEL_CONNECTIONS.autonomy[0]}/><Wire {...REEL_CONNECTIONS.autonomy[1]}/><Wire {...REEL_CONNECTIONS.autonomy[2]}/><Wire {...REEL_CONNECTIONS.autonomy[3]}/>
  <Node x={52} y={25} w={144} label="Observe" detail="Event received" at={0.26}/><Node x={344} y={25} w={144} label="Decide" detail="Check policy" at={0.68}/><Node x={344} y={193} w={144} label="Act" detail="Bounded action" at={1.52}/><Node x={52} y={193} w={144} label="Verify" detail="Check outcome" at={2.52} mark="check"/><Core at={2.18} service="autonomy"/>
  </>:scene.key==="consulting"?<>
- <Wire d="M154 139H198" at={0.18}/><Wire d="M340 139H384" at={1.18}/>
+ <Wire {...REEL_CONNECTIONS.consulting[0]}/><Wire {...REEL_CONNECTIONS.consulting[1]}/>
  <Node x={12} y={107} label="Architecture" detail="Design review" at={0.35}/><Node x={198} y={107} label="Evaluation" detail="Quality and safety" at={1.35}/><Node x={384} y={107} label="Release gate" detail="Go / no-go" at={2.35} mark="check"/>
  <g transform="translate(205 202)">{[.66,.82,.74,.92,.85].map((v,i)=><rect key={i} x={i*27} y={46-46*v} width="17" height={46*v} className="sr-chart-bar" style={{"--at":(1.18+i*.055)+"s"}} rx="3" fill={i===3?"#ee5414":"currentColor"} opacity={i===3?1:.32}/>)}</g><Core x={270} y={53} at={1.18} service="consulting" small/>
  </>:scene.key==="integrations"?<>
- <Wire d="M162 62H205L237 112" at={0.18}/><Wire d="M162 220H205L237 170" at={1.18}/><Wire d="M303 112L335 62H378" at={2.18}/><Wire d="M303 170L335 220H378" at={2.18}/>
+ <Wire {...REEL_CONNECTIONS.integrations[0]}/><Wire {...REEL_CONNECTIONS.integrations[1]}/><Wire {...REEL_CONNECTIONS.integrations[2]}/><Wire {...REEL_CONNECTIONS.integrations[3]}/>
  <Node x={20} y={30} label="CRM" detail="Scoped access" at={0.35}/><Node x={20} y={188} label="Knowledge" detail="Read permissions" at={1.35}/><Core at={1.18} service="integrations"/><Node x={378} y={30} label="Business API" detail="Validated calls" at={2.43}/><Node x={378} y={188} label="Audit log" detail="Trace actions" at={2.68} mark="check"/>
  </>:<>
  <g transform="translate(20 0) scale(.76 1) translate(-20 0)"><rect x="20" y="24" width="500" height="151" rx="16" className="sr-chart-bg"/><text x="39" y="51" className="sr-node-label">Service health · illustrative</text>
  <path d="M42 82H498M42 113H498M42 144H498" className="sr-wire-base" fill="none"/>
- <path d="M42 125L102 110L160 119L220 87L280 131L344 104L409 91L498 83" className="sr-wire-live" fill="none" strokeLinecap="round" strokeLinejoin="round" pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":".18s"}}/>
- <circle cx="280" cy="131" r="6" fill="#ee5414" className="sr-chart-point"/></g><Core x={463} y={100} at={1.18} service="support"/><Wire d="M178 228H198" at={1.18}/><Wire d="M340 228H362" at={2.18}/>
+ <path d={SUPPORT_CHART_SIGNAL.d} className="sr-wire-live" fill="none" strokeLinecap="round" strokeLinejoin="round" pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":SUPPORT_CHART_SIGNAL.at+"s","--wire-duration":SUPPORT_CHART_SIGNAL.duration+"s"}}/>
+ <circle cx="280" cy="131" r="6" fill="#ee5414" className="sr-chart-point"/></g><Core x={463} y={100} at={1.18} service="support"/><Wire {...REEL_CONNECTIONS.support[0]}/><Wire {...REEL_CONNECTIONS.support[1]}/>
  <Node x={20} y={196} w={158} label="Monitor" detail="Watch outcomes" at={0.26}/><Node x={198} y={196} label="Investigate" detail="Review traces" at={1.35}/><Node x={362} y={196} w={158} label="Improve" detail="Regression test" at={2.35} mark="check"/>
  </>}
  </g>
