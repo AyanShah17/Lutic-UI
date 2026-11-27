@@ -245,7 +245,7 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:var(--mut);font-weight:500;border-top:1px solid var(--line);padding-top:12px}
 .sr-stage:focus-visible,.sr-stage a:focus-visible{outline:2px solid var(--or);outline-offset:3px}
 .sr-scene-stack{display:grid;min-width:0;isolation:isolate}
-.sr-scene{grid-area:1/1;display:grid;grid-template-rows:minmax(0,auto) auto auto;gap:14px;min-width:0;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,5px,0);transition:opacity .42s ease,transform .42s cubic-bezier(.2,.75,.2,1),visibility 0s .42s}
+.sr-scene{grid-area:1/1;display:grid;grid-template-rows:minmax(0,auto) auto;gap:14px;min-width:0;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,5px,0);transition:opacity .42s ease,transform .42s cubic-bezier(.2,.75,.2,1),visibility 0s .42s}
 .sr-scene-active{opacity:1;visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);z-index:1;transition-delay:0s}
 .sr-scene-copy{min-height:108px}
 .sr-clock{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;animation:sr-clock var(--scene-duration,5s) linear both}
@@ -298,20 +298,9 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-film-camera{transform-box:view-box;transform-origin:center}
 .sr-film-signal{stroke:var(--or);stroke-width:4;stroke-dasharray:.075 1.15;stroke-dashoffset:.075;opacity:0;pointer-events:none}
 .sr-core-art{transform-box:fill-box;transform-origin:center}
-.sr-film-caption{display:flex;align-items:center;gap:9px;min-width:0;min-height:38px;padding:8px 0;color:var(--ink);border-top:1px solid var(--line)}
-.sr-film-caption-dot{flex:none;width:7px;height:7px;background:var(--or);border-radius:50%}
-.sr-film-caption-stack{display:grid;min-width:0;flex:1;align-items:center}
-.sr-film-caption-line{grid-area:1/1;opacity:0;font-size:12px;font-weight:500;line-height:1.45;overflow-wrap:anywhere}
-.sr-film-caption-final{opacity:1}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-film-camera{animation:sr-film-camera var(--scene-duration,5s) cubic-bezier(.2,.65,.2,1) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-film-signal{animation:sr-film-signal var(--signal-duration,.92s) linear var(--signal-at,0s) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art{animation:sr-film-core 1.15s cubic-bezier(.2,.7,.2,1) var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-caption-line{animation:sr-film-caption var(--beat-length) linear var(--beat-start) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-caption-final{animation:sr-film-caption-final var(--beat-length) ease var(--beat-start) both}
 @keyframes sr-film-camera{from{transform:scale(.975) translateY(2px)}to{transform:scale(1) translateY(0)}}
 @keyframes sr-film-signal{0%{opacity:0;stroke-dashoffset:.075}10%{opacity:1}88%{opacity:1}100%{opacity:0;stroke-dashoffset:-1}}
 @keyframes sr-film-core{0%,100%{transform:scale(1)}36%{transform:scale(1.07)}}
-@keyframes sr-film-caption{0%{opacity:0;transform:translateY(3px)}18%,85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-3px)}}
-@keyframes sr-film-caption-final{0%{opacity:0;transform:translateY(3px)}25%,100%{opacity:1;transform:translateY(0)}}
-@media(max-width:480px){.sr-film-caption-line{font-size:11px}.sr-film-caption{min-height:42px}}
-@media(prefers-reduced-motion:reduce){.sr-film-caption-line{opacity:0}.sr-film-caption-final{opacity:1}}

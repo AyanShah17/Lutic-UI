@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,filmBeats} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,30);
@@ -48,15 +48,6 @@ test("each reel cycle alternates the review-required and direct-result examples"
  assert.deepEqual(state,{index:0,reviewRequired:true});
 });
 
-test("film captions cover each complete scene with no overlap or gaps",()=>{
- for(const scene of SCENES)for(const review of [true,false]){
-  const beats=filmBeats(scene.key,review);
-  assert.equal(beats[0].start,0);assert.equal(beats.at(-1).end,SCENE_SECONDS);
-  for(let i=0;i<beats.length;i++){assert.ok(beats[i].end>beats[i].start);if(i)assert.equal(beats[i].start,beats[i-1].end);}
- }
- assert.match(filmBeats("automation",true).at(-1).text,/Waiting for approval/);
- assert.match(filmBeats("automation",false).at(-1).text,/Result delivered/);
-});
 test("automation signals arrive in story order before the final hold",()=>{
  const flow=automationFlow(false);
  assert.ok(flow[0].wireAt+.58<=flow[1].wireAt);

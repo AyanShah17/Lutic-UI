@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,nextReelState,shouldRunReel,automationFlow,filmBeats} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,nextReelState,shouldRunReel,automationFlow} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
-// scene's wires, node highlights, chart bars and step captions.
+// scene's wires, node highlights, chart bars and moving signals.
 function Node({x,y,w=142,h=64,label,detail,at=0,mark="dot",enabled=true}){
  return <g className={enabled?"sr-node sr-node-active":"sr-node sr-node-inactive"} style={{"--at":at+"s"}}>
   <rect x={x} y={y} width={w} height={h} rx="13"/>
@@ -66,14 +66,9 @@ function Diagram({scene,reviewRequired}){
  </svg>;
 }
 const Scene=memo(function Scene({scene,active,reviewRequired}){
- const beats=filmBeats(scene.key,reviewRequired);
  return <div className={"sr-scene"+(active?" sr-scene-active":"")} aria-hidden={!active}>
   <div className="sr-scene-copy"><span className="sr-eyebrow">{scene.label}</span><h3>{scene.title}</h3><p>{scene.description}</p></div>
   <Diagram scene={scene} reviewRequired={reviewRequired}/>
-  <div className="sr-film-caption" aria-label={beats.map(b=>b.text).join(" ")}>
-   <span className="sr-film-caption-dot" aria-hidden="true"/>
-   <div className="sr-film-caption-stack" aria-hidden="true">{beats.map((beat,i)=><span key={beat.text} className={"sr-film-caption-line"+(i===beats.length-1?" sr-film-caption-final":"")} style={{"--beat-start":beat.start+"s","--beat-length":(beat.end-beat.start)+"s"}}>{beat.text}</span>)}</div>
-  </div>
  </div>;
 });
 export default function StudioReel(){
