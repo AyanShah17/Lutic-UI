@@ -24,5 +24,15 @@ for(const [key,p] of Object.entries(pages)){
 const robots=await (await get("/robots.txt")).text(),sitemap=await (await get("/sitemap.xml")).text();
 if(noindex)assert.ok(!sitemap.includes("<loc>"));
 else{assert.ok(robots.includes(expected+"/sitemap.xml"));for(const p of Object.values(pages))assert.ok(sitemap.includes("<loc>"+expected+p.path+"</loc>"));}
+const homepage=await (await get("/")).text();
+const iconTags=(homepage.match(/<link\b[^>]*>/gi)||[]).filter(t=>attr(t,"rel")==="icon");
+assert.ok(iconTags.some(t=>new URL(attr(t,"href"),target).pathname==="/favicon.png"&&attr(t,"sizes")==="192x192"&&attr(t,"type")==="image/png"),"stable PNG favicon link");
+const favicon=await get("/favicon.png");
+assert.match(favicon.headers.get("content-type")||"",/image\/png/);
+if(!noindex)assert.doesNotMatch(favicon.headers.get("x-robots-tag")||"",/noindex/i);
+const png=Buffer.from(await favicon.arrayBuffer());
+assert.equal(png.subarray(0,8).toString("hex"),"89504e470d0a1a0a");
+assert.equal(png.readUInt32BE(16),192);assert.equal(png.readUInt32BE(20),192);
+assert.equal((await get("/icon.svg")).status,200);
 const reel=await get("/motion-loop.html");assert.match(reel.headers.get("x-robots-tag")||"",/noindex/i);
 console.log("PASS robots, sitemap and motion asset");

@@ -36,10 +36,20 @@ test("structured data matches public page identities",()=>{
 });
 
 test("brand-first homepage, editorial pages and service URLs",()=>{
- assert.equal(pageMetadata("home",live).title.absolute,"Lutic | Independent AI Studio & Agentic Automation");
+ assert.equal(pageMetadata("home",live).title.absolute,"Lutic | AI Solutions, Automation & Consulting");
  const names=["agentic-automation","ai-integrations","ai-support","about","insights","production-ai-checklist","agentic-workflow-design"];
  for(const key of names)assert.ok(pages[key]);
  const graph=structuredData("production-ai-checklist",live)["@graph"];
  assert.equal(graph.find(n=>n["@type"]==="BreadcrumbList").itemListElement.length,3);
  assert.equal(graph.find(n=>n["@type"]==="Article").headline,pages["production-ai-checklist"].heading);
+});
+
+test("preferred site name and square organization logo",()=>{
+ const graph=structuredData("home",live)["@graph"];
+ const website=graph.find(n=>n["@type"]==="WebSite"),org=graph.find(n=>n["@type"]==="Organization");
+ assert.equal(website.name,"Lutic");assert.equal(website.url,"https://example.com/");
+ assert.ok(website.alternateName.includes("Lutic AI Studio"));
+ assert.equal(org.logo.url,"https://example.com/favicon.png");
+ assert.equal(org.logo.width,192);assert.equal(org.logo.height,192);
+ assert.equal(pageMetadata("home",live).openGraph.siteName,"Lutic");
 });

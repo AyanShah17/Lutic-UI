@@ -1,12 +1,13 @@
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import {site} from "@/lib/seo.mjs";
+import {pages,site} from "@/lib/seo.mjs";
 import {HOME_RELOAD_SCROLL_SCRIPT} from "@/lib/intro.mjs";
 export const metadata={
  ...(site.origin?{metadataBase:new URL(site.origin)}:{}),
- title:{default:"Lutic | Independent AI Studio & Agentic Automation",template:"%s | Lutic"},
- description:"Custom AI solutions, agentic automation, integrations and production consulting.",
+ title:{default:pages.home.title,template:"%s | Lutic"},
+ description:pages.home.description,
+ icons:{icon:[{url:"/favicon.png",type:"image/png",sizes:"192x192"}],apple:[{url:"/favicon.png",sizes:"192x192",type:"image/png"}]},
  applicationName:"Lutic",
  ...(process.env.GOOGLE_SITE_VERIFICATION?{verification:{google:process.env.GOOGLE_SITE_VERIFICATION}}:{}),
  robots:site.indexable?{index:true,follow:true}:{index:false,follow:false}
