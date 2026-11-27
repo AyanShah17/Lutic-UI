@@ -1,6 +1,6 @@
 "use client";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,AUTOMATION_TIMING} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,nextReelState,shouldRunReel,automationFlow,mascotExpression,mascotEyePose,expressionLineBeats,AUTOMATION_TIMING} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and moving signals.
@@ -25,6 +25,13 @@ const ORIGINAL_EYES=[[82,106],[118,97]];
 function eyeTransform([dx,dy,sx,sy,angle]){
  return "translate("+dx+"px,"+dy+"px) rotate("+angle+"deg) scale("+sx+","+sy+")";
 }
+function ExpressionLines({story}){
+ return <g className="sr-expression-lines" aria-hidden="true" fill="none" stroke="#ee5414" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">
+  {expressionLineBeats(story).map(beat=><g key={beat.state+"-"+beat.delay} className="sr-expression-mark" style={{"--mark-delay":beat.delay+"s","--mark-duration":beat.duration+"s"}}>
+   {beat.paths.map(d=><path key={d} d={d}/>)}
+  </g>)}
+ </g>;
+}
 function Face({story}){
  const states=[...new Set(story.beats.map(([state])=>state))];
  return <g className="sr-face" style={{"--eye-story":story.animation}}>
@@ -46,6 +53,7 @@ function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=fa
    <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" data-service={service} style={{"--at":at+"s"}}>
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
+    <ExpressionLines story={face}/>
     <Face story={face}/>
    </g></g>
   </g>

@@ -327,3 +327,10 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-auto-wait{opacity:0}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-wait{animation:sr-auto-wait calc((var(--wait-duration) + .1s) * var(--film-pace,1)) linear calc(var(--wait-at) * var(--film-pace,1)) both}
 @keyframes sr-auto-wait{0%{opacity:0}15%,80%{opacity:1}100%{opacity:0}}
+
+/* Minimal animated expression accents. Each individual story beat gets a
+   brief pulse, using the same film clock as its eye pose and workflow. */
+.sr-expression-lines{pointer-events:none}
+.sr-expression-mark{opacity:0;transform-box:fill-box;transform-origin:center bottom}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-expression-mark{animation:sr-expression-accent calc(var(--mark-duration) * var(--film-pace,1)) cubic-bezier(.25,.7,.25,1) calc(var(--mark-delay) * var(--film-pace,1)) both}
+@keyframes sr-expression-accent{0%{opacity:0;transform:translateY(3px) scale(.86)}24%{opacity:.95;transform:translateY(0) scale(1)}62%{opacity:.88;transform:translateY(-1px) scale(1)}100%{opacity:0;transform:translateY(-3px) scale(1)}}

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotStoryCSS,AUTOMATION_TIMING} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,FILM_PACE,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,mascotExpression,mascotEyePose,mascotStoryCSS,expressionLineBeats,AUTOMATION_TIMING} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
  assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,42);
@@ -102,5 +102,25 @@ test("all expressions preserve two subtle oval-eye transforms",()=>{
     assert.ok(sx>=.9&&sx<=1.15&&sy>=.6&&sy<=1.35&&Math.abs(angle)<=12);
    }
   }
+ }
+});
+
+test("head accents follow every eye beat without overlapping or preceding the outcome",()=>{
+ for(const scene of SCENES)for(const review of [true,false]){
+  const story=mascotExpression(scene.key,review);
+  const marks=expressionLineBeats(story);
+  assert.equal(marks.length,story.beats.length);
+  for(let i=0;i<marks.length;i++){
+   const mark=marks[i],next=story.beats[i+1]?.[1]??SCENE_SECONDS/FILM_PACE;
+   assert.equal(mark.state,story.beats[i][0]);
+   assert.ok(mark.delay>=story.beats[i][1]);
+   assert.ok(mark.duration>0&&mark.delay+mark.duration<=next);
+   assert.ok(mark.paths.length>=2&&mark.paths.length<=3);
+  }
+ }
+ for(const review of [true,false]){
+  const mark=expressionLineBeats(mascotExpression("automation",review)).at(-1);
+  assert.equal(mark.state,"result");
+  assert.ok(mark.delay>=(review?AUTOMATION_TIMING.reviewResultReady:AUTOMATION_TIMING.directResultReady));
  }
 });
