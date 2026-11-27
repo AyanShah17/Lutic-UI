@@ -28,7 +28,7 @@ function Diagram({scene}){
  </>:scene.key==="automation"?<>
  <Wire d="M111 140H143" at={0.18}/><Wire d="M235 140H276" at={1.18}/><Wire d="M368 140H407" at={2.18}/>
  <Node x={15} y={108} w={96} label="Request" detail="New task" at={0.26}/><Node x={143} y={108} w={92} label="Plan" detail="Steps" at={0.68}/><Node x={276} y={108} w={92} label="Tools" detail="Scoped API" at={1.52}/><Node x={407} y={108} w={118} label="Approval" detail="Human review" at={2.43}/>
- <Wire d="M322 108V65H270V83" at={1.18}/><Core x={270} y={41} at={1.18}/><text x="270" y="240" textAnchor="middle" className="sr-caption">Policy checks before consequential actions</text>
+ <Wire d="M270 65V82Q270 90 278 90H314Q322 90 322 98V108" at={1.18}/><Core x={270} y={41} at={1.18}/><text x="270" y="240" textAnchor="middle" className="sr-caption">Policy checks before consequential actions</text>
  </>:scene.key==="autonomy"?<>
  <Wire d="M196 57H344" at={0.18}/><Wire d="M416 89V193" at={1.18}/><Wire d="M344 225H196" at={2.18}/><Wire d="M124 193V89" at={2.18} partial/>
  <Node x={52} y={25} w={144} label="Observe" detail="Event received" at={0.26}/><Node x={344} y={25} w={144} label="Decide" detail="Check policy" at={0.68}/><Node x={344} y={193} w={144} label="Act" detail="Bounded action" at={1.52}/><Node x={52} y={193} w={144} label="Verify" detail="Check outcome" at={2.52} mark="check"/><Core at={2.18}/>
