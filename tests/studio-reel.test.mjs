@@ -93,3 +93,8 @@ test("six service-specific mascot personas have distinct costumes",()=>{
  assert.equal(mascotPersona("consulting").accessory,"helmet");
  assert.throws(()=>mascotPersona("unknown"));
 });
+
+test("character accessory choices retain the six established roles",()=>{
+ assert.deepEqual(SCENES.map(s=>mascotPersona(s.key).accessory),["glasses","antenna","visor","helmet","ports","headset"]);
+ assert.equal(SCENE_SECONDS,7);assert.equal(REEL_SECONDS,42);
+});

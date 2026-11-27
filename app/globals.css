@@ -316,11 +316,25 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-eye-express{from{transform:var(--eye-from)}to{transform:var(--eye-to)}}
 @keyframes sr-eye-blink{0%,19%,23%,78%,82%,100%{transform:scaleY(1)}21%,80%{transform:scaleY(.12)}}
 
-/* Service costumes attach to the mascot, never to the official brand logo. */
+/* A coherent costume family: crisp dark housings, warm-white outlines and orange signals.
+   The character remains fixed on its workflow port; only local accents move. */
 .sr-costume{pointer-events:none;transform-box:fill-box;transform-origin:center}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-costume{animation:sr-costume-enter .46s cubic-bezier(.2,.75,.2,1) .12s both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-pulse{animation:sr-persona-pulse 2.4s ease-in-out .5s 2 both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-scan{animation:sr-persona-scan 1.8s ease-in-out .65s 2 both}
-@keyframes sr-costume-enter{from{opacity:0;transform:translateY(-5px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes sr-persona-pulse{0%,100%{opacity:.8}50%{opacity:1}70%{opacity:.4}}
-@keyframes sr-persona-scan{0%,100%{transform:translateY(0);opacity:.25}50%{transform:translateY(12px);opacity:.85}}
+.sr-persona-glint,.sr-persona-wave,.sr-persona-mic{opacity:.8}
+.sr-persona-port-in,.sr-persona-port-out,.sr-persona-led{opacity:1}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-costume{animation:sr-costume-enter .4s cubic-bezier(.2,.75,.2,1) .18s both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-glint{animation:sr-persona-glint 1.1s ease-in-out 1.45s 2 both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-wave{animation:sr-persona-wave 1.05s ease-in-out .65s 3 both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-scan{animation:sr-persona-scan 1.35s ease-in-out .6s 3 both}
+.sr-stage[data-reduced="false"] .sr-scene-active [data-persona="helmet"] .sr-persona-led{animation:sr-persona-ready .45s ease 3.3s both}
+.sr-stage[data-reduced="false"] .sr-scene-active [data-persona="antenna"] .sr-persona-led{animation:sr-persona-led .9s ease-in-out .65s 3 both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-port-in{animation:sr-persona-led .8s ease-in-out .4s 2 both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-port-out{animation:sr-persona-led .8s ease-in-out 2.7s 2 both}
+.sr-stage[data-reduced="false"] .sr-scene-active [data-persona="headset"] .sr-persona-led,.sr-stage[data-reduced="false"] .sr-scene-active .sr-persona-mic{animation:sr-persona-led 1.1s ease-in-out 1.5s 2 both}
+/* Do not move the automation mascot off its lower-center connector. */
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art[data-persona="antenna"]{animation:none}
+@keyframes sr-costume-enter{from{opacity:0}to{opacity:1}}
+@keyframes sr-persona-glint{0%,100%{opacity:.65}45%{opacity:1}70%{opacity:.35}}
+@keyframes sr-persona-wave{0%{opacity:.3}45%{opacity:1}100%{opacity:.65}}
+@keyframes sr-persona-scan{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(12px);opacity:.85}}
+@keyframes sr-persona-ready{from{opacity:.15}to{opacity:1}}
+@keyframes sr-persona-led{0%{opacity:.35}50%,100%{opacity:1}}

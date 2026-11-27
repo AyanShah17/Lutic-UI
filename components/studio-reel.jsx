@@ -35,42 +35,68 @@ function Face({initial,final,changeAt}){
   </g>)}
  </g>;
 }
-// All costume artwork is in the same 200-unit coordinate space as the
-// original logo. Accessories stay within the existing halo and leave the
-// lower-center connection port unobstructed.
+// A matched industrial-design family in the logo's native 200-unit space.
+ // Thick, rounded contours remain legible at the small diagram scale.
+ // Accessories sit behind the two original eyes and avoid the bottom port.
 function Costume({accessory}){
  return <g className="sr-costume" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round">
   {accessory==="glasses"?<>
-   <g fill="none" stroke="#f4eee8" strokeWidth="4">
-    <rect x="64" y="88" width="35" height="31" rx="10" transform="rotate(-8 81.5 103.5)"/>
-    <rect x="101" y="81" width="35" height="31" rx="10" transform="rotate(-8 118.5 96.5)"/>
-    <path d="M99 99l5 -1M64 102l-10 -2M136 94l9 -3"/>
+   <g fill="none" stroke="#101012" strokeWidth="8">
+    <path d="M49 103l14 1M98 101l5 -1M136 94l15 -4"/>
+    <rect x="64" y="88" width="36" height="36" rx="11" transform="rotate(-14 82 106)"/>
+    <rect x="100" y="79" width="36" height="36" rx="11" transform="rotate(-14 118 97)"/>
    </g>
-   <path d="M72 93l8 -2M109 86l8 -2" fill="none" stroke="#ee5414" strokeWidth="2.5" opacity=".9"/>
+   <g fill="none" stroke="#f4eee8" strokeWidth="4.8">
+    <path d="M49 103l14 1M98 101l5 -1M136 94l15 -4"/>
+    <rect x="64" y="88" width="36" height="36" rx="11" transform="rotate(-14 82 106)"/>
+    <rect x="100" y="79" width="36" height="36" rx="11" transform="rotate(-14 118 97)"/>
+   </g>
+   <g className="sr-persona-glint" fill="none" stroke="#ee5414" strokeWidth="3"><path d="M69 97l8 -3M105 88l8 -3"/></g>
   </>:accessory==="antenna"?<>
-   <g fill="#101012" stroke="#f4eee8" strokeWidth="3.5"><rect x="87" y="26" width="26" height="16" rx="7"/><path d="M100 26V13" fill="none"/><circle cx="100" cy="10" r="7" fill="#ee5414"/></g>
-   <g className="sr-persona-pulse" fill="none" stroke="#ee5414" strokeWidth="3"><path d="M85 11Q85 0 100 0Q115 0 115 11"/><path d="M79 15Q79 -7 100 -7Q121 -7 121 15" opacity=".6"/></g>
-  </>:accessory==="visor"?<>
-   <path d="M55 85Q100 69 145 85L145 108Q100 123 55 108Z" fill="#ee5414" fillOpacity=".12" stroke="#f4eee8" strokeWidth="3.5"/>
-   <path d="M60 89l16 -5M125 112l14 -4" stroke="#ee5414" strokeWidth="3" fill="none"/>
-   <path className="sr-persona-scan" d="M58 94Q100 84 142 94" stroke="#f4eee8" strokeOpacity=".7" strokeWidth="2" fill="none"/>
-  </>:accessory==="helmet"?<>
-   <path d="M49 57Q49 16 96 16Q144 16 151 57L158 65H42Z" fill="#f4eee8" stroke="#101012" strokeWidth="4"/>
-   <path d="M87 19Q83 36 83 54M108 19Q112 36 112 54" fill="none" stroke="#ee5414" strokeWidth="5"/>
-   <path d="M43 64h114" stroke="#ee5414" strokeWidth="7"/>
-   <rect x="91" y="43" width="18" height="8" rx="3" fill="#ee5414"/>
-  </>:accessory==="ports"?<>
-   <g fill="#101012" stroke="#f4eee8" strokeWidth="3.5">
-    <rect x="20" y="87" width="25" height="26" rx="7"/><rect x="155" y="87" width="25" height="26" rx="7"/>
-    <path d="M20 95H9M20 105H9M180 95H191M180 105H191" fill="none"/>
+   <path d="M90 35l2 -9h16l3 9" fill="#101012" stroke="#f4eee8" strokeWidth="4.5"/>
+   <path d="M100 27V12" stroke="#101012" strokeWidth="9"/>
+   <path d="M100 27V12" stroke="#f4eee8" strokeWidth="4.5"/>
+   <circle cx="100" cy="10" r="8" fill="#101012" stroke="#f4eee8" strokeWidth="4"/>
+   <circle className="sr-persona-led" cx="100" cy="10" r="4" fill="#ee5414"/>
+   <g className="sr-persona-wave" fill="none" stroke="#ee5414" strokeWidth="3.5">
+    <path d="M84 13Q84 0 92 -3M116 13Q116 0 108 -3"/>
+    <path d="M77 16Q77 -3 87 -8M123 16Q123 -3 113 -8" opacity=".55"/>
    </g>
-   <g className="sr-persona-pulse" fill="#ee5414"><circle cx="32.5" cy="100" r="4.5"/><circle cx="167.5" cy="100" r="4.5"/></g>
+  </>:accessory==="visor"?<>
+   <path d="M53 86L63 77L135 65L148 76L148 108L138 119L65 132L53 119Z" fill="#101012" stroke="#101012" strokeWidth="7"/>
+   <path d="M53 86L63 77L135 65L148 76L148 108L138 119L65 132L53 119Z" fill="#ee5414" fillOpacity=".12" stroke="#f4eee8" strokeWidth="4.5"/>
+   <path d="M60 87l7 -5M134 112l7 -5" fill="none" stroke="#ee5414" strokeWidth="4"/>
+   <g transform="rotate(-10 100 100)"><path className="sr-persona-scan" d="M63 92H137" stroke="#ee5414" strokeWidth="3" opacity=".7"/></g>
+  </>:accessory==="helmet"?<>
+   <path d="M48 63L51 50Q54 20 86 17L90 12H108L112 17Q141 23 147 50L153 63L159 68L155 75L43 75L39 68Z" fill="#101012" stroke="#101012" strokeWidth="6"/>
+   <path d="M48 63L51 50Q54 20 86 17L90 12H108L112 17Q141 23 147 50L153 63L159 68L155 75L43 75L39 68Z" fill="#f4eee8" stroke="#101012" strokeWidth="3.5"/>
+   <path d="M89 18Q83 34 83 51M109 18Q115 34 115 51" stroke="#d2c9c1" strokeWidth="4" fill="none"/>
+   <path d="M44 66H154" stroke="#ee5414" strokeWidth="7"/>
+   <rect x="88" y="38" width="23" height="16" rx="5" fill="#101012"/>
+   <path className="sr-persona-led" d="M94 46l4 4 7 -8" fill="none" stroke="#ee5414" strokeWidth="3.5"/>
+  </>:accessory==="ports"?<>
+   <g fill="#101012" stroke="#101012" strokeWidth="7">
+    <path d="M45 93H24M155 93H176"/><rect x="18" y="83" width="30" height="34" rx="9"/><rect x="152" y="83" width="30" height="34" rx="9"/>
+   </g>
+   <g fill="#101012" stroke="#f4eee8" strokeWidth="4.5">
+    <rect x="18" y="83" width="30" height="34" rx="9"/><rect x="152" y="83" width="30" height="34" rx="9"/>
+    <path d="M18 94H7M18 106H7M182 94H193M182 106H193" fill="none"/>
+   </g>
+   <g className="sr-persona-port-in" fill="#ee5414"><rect x="26" y="91" width="14" height="18" rx="4"/></g>
+   <g className="sr-persona-port-out" fill="#ee5414"><rect x="160" y="91" width="14" height="18" rx="4"/></g>
+   <path d="M33 96v8M167 96v8" stroke="#101012" strokeWidth="3"/>
   </>:accessory==="headset"?<>
-   <path d="M39 100V79Q39 30 100 30Q161 30 161 79V100" fill="none" stroke="#f4eee8" strokeWidth="6"/>
-   <g fill="#101012" stroke="#f4eee8" strokeWidth="3.5"><rect x="27" y="88" width="20" height="34" rx="8"/><rect x="153" y="88" width="20" height="34" rx="8"/></g>
-   <path d="M163 121Q159 140 133 140" fill="none" stroke="#f4eee8" strokeWidth="4"/>
-   <rect x="122" y="135" width="16" height="10" rx="5" fill="#ee5414" stroke="#f4eee8" strokeWidth="2"/>
-   <circle className="sr-persona-pulse" cx="163" cy="105" r="4" fill="#ee5414"/>
+   <path d="M39 99V79Q39 29 100 29Q161 29 161 79V99" fill="none" stroke="#101012" strokeWidth="11"/>
+   <path d="M39 99V79Q39 29 100 29Q161 29 161 79V99" fill="none" stroke="#f4eee8" strokeWidth="6"/>
+   <path d="M72 35Q100 25 128 35" fill="none" stroke="#ee5414" strokeWidth="5"/>
+   <g fill="#101012" stroke="#f4eee8" strokeWidth="4.5">
+    <rect x="26" y="86" width="23" height="36" rx="9"/><rect x="151" y="86" width="23" height="36" rx="9"/>
+   </g>
+   <path d="M162 121Q162 139 142 140H133" fill="none" stroke="#101012" strokeWidth="8"/>
+   <path d="M162 121Q162 139 142 140H133" fill="none" stroke="#f4eee8" strokeWidth="4.5"/>
+   <rect x="121" y="134" width="17" height="12" rx="5" fill="#101012" stroke="#f4eee8" strokeWidth="3.5"/>
+   <circle className="sr-persona-led" cx="162" cy="104" r="5" fill="#ee5414"/>
+   <path className="sr-persona-mic" d="M125 130v-5M131 130v-8M137 131v-4" stroke="#ee5414" strokeWidth="2.8" fill="none"/>
   </>:null}
  </g>;
 }
@@ -79,13 +105,13 @@ function Core({x=270,y=141,at=0,service="solutions",reviewRequired=true,small=fa
  const persona=mascotPersona(service);
  const changeAt=service==="automation"?4.3:3.25;
  return <g transform={"translate("+x+" "+y+")"}>
-  <g transform={small?"scale(.72)":undefined}>
+  <g transform={small?"scale(.86)":undefined}>
    <circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/>
    <g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art" data-persona={persona.accessory} style={{"--at":at+"s"}}>
     <polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/>
     <circle cx="100" cy="100" r="52" fill="#101012"/>
-    <Face initial={face.initial} final={face.final} changeAt={changeAt}/>
     <Costume accessory={persona.accessory}/>
+    <Face initial={face.initial} final={face.final} changeAt={changeAt}/>
    </g></g>
   </g>
  </g>;
