@@ -1,19 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState} from "../lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,REEL_SECONDS,reelPosition,advanceReel,nextSceneIndex,shouldRunReel,automationFlow,nextReelState,filmBeats} from "../lib/studio-reel.mjs";
 import {pages} from "../lib/seo.mjs";
 test("all six studio offerings have distinct scenes and real service links",()=>{
- assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,24);
+ assert.equal(SCENES.length,6);assert.equal(REEL_SECONDS,30);
  assert.equal(new Set(SCENES.map(s=>s.key)).size,6);
  for(const s of SCENES){assert.equal(s.steps.length,3);assert.ok(Object.values(pages).some(p=>p.path===s.href));}
 });
 test("chapter seeking, progress, and loop boundaries",()=>{
  for(let i=0;i<6;i++){assert.deepEqual(reelPosition(i*SCENE_SECONDS),{index:i,progress:0,step:0});}
- assert.deepEqual(reelPosition(24),{index:5,progress:1,step:2});
+ assert.deepEqual(reelPosition(30),{index:5,progress:1,step:2});
  assert.equal(reelPosition(-3).index,0);
  assert.equal(reelPosition(NaN).index,0);
  assert.equal(reelPosition(2).step,1);
- assert.equal(advanceReel(23,1),0);
+ assert.equal(advanceReel(29,1),0);
  assert.equal(advanceReel(3,-1),3);
 });
 
@@ -46,4 +46,22 @@ test("each reel cycle alternates the review-required and direct-result examples"
  assert.deepEqual(state,{index:0,reviewRequired:false});
  for(let i=0;i<6;i++)state=nextReelState(state);
  assert.deepEqual(state,{index:0,reviewRequired:true});
+});
+
+test("film captions cover each complete scene with no overlap or gaps",()=>{
+ for(const scene of SCENES)for(const review of [true,false]){
+  const beats=filmBeats(scene.key,review);
+  assert.equal(beats[0].start,0);assert.equal(beats.at(-1).end,SCENE_SECONDS);
+  for(let i=0;i<beats.length;i++){assert.ok(beats[i].end>beats[i].start);if(i)assert.equal(beats[i].start,beats[i-1].end);}
+ }
+ assert.match(filmBeats("automation",true).at(-1).text,/Waiting for approval/);
+ assert.match(filmBeats("automation",false).at(-1).text,/Result delivered/);
+});
+test("automation signals arrive in story order before the final hold",()=>{
+ const flow=automationFlow(false);
+ assert.ok(flow[0].wireAt+.58<=flow[1].wireAt);
+ assert.ok(flow[1].wireAt+.58<=flow[2].wireAt);
+ assert.ok(flow[2].wireAt+.58<2.46);
+ assert.ok(2.46+.4<flow[4].wireAt);
+ assert.ok(flow[4].wireAt+.58<SCENE_SECONDS);
 });

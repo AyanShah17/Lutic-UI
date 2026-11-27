@@ -233,7 +233,7 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .seo-home-links{padding-top:50px;padding-bottom:50px}
 @media(max-width:600px){.seo-related{grid-template-columns:1fr}.seo-section{padding:24px 0}}
 
-/* Original studio diagram reel, with a single frame and continuous autoplay. */
+/* Lutic studio film: single frame, six cinematic scenes, continuous autoplay. */
 .studio-showcase{padding-bottom:40px}
 .studio-showcase-split{align-items:center;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:clamp(24px,5vw,68px)}
 .studio-showcase-copy{min-width:0}
@@ -245,10 +245,10 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:var(--mut);font-weight:500;border-top:1px solid var(--line);padding-top:12px}
 .sr-stage:focus-visible,.sr-stage a:focus-visible{outline:2px solid var(--or);outline-offset:3px}
 .sr-scene-stack{display:grid;min-width:0;isolation:isolate}
-.sr-scene{grid-area:1/1;display:grid;grid-template-rows:minmax(0,auto) auto auto;gap:14px;min-width:0;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,5px,0);transition:opacity .32s ease,transform .32s cubic-bezier(.2,.75,.2,1),visibility 0s .32s}
+.sr-scene{grid-area:1/1;display:grid;grid-template-rows:minmax(0,auto) auto auto;gap:14px;min-width:0;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,5px,0);transition:opacity .42s ease,transform .42s cubic-bezier(.2,.75,.2,1),visibility 0s .42s}
 .sr-scene-active{opacity:1;visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);z-index:1;transition-delay:0s}
 .sr-scene-copy{min-height:108px}
-.sr-clock{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;animation:sr-clock var(--scene-duration,4s) linear both}
+.sr-clock{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;animation:sr-clock var(--scene-duration,5s) linear both}
 @keyframes sr-clock{from{opacity:0}to{opacity:0.01}}
 .sr-eyebrow{font-size:10px;letter-spacing:.10em;text-transform:uppercase;font-weight:600;color:var(--or)}
 .sr-scene-copy h3{font-size:clamp(22px,2.4vw,34px);line-height:1.12;letter-spacing:-.04em;font-weight:500;margin:9px 0 8px}
@@ -263,13 +263,9 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-wire-live{stroke:var(--or);stroke-width:2.5}
 .sr-check{fill:none;stroke:var(--or);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sr-core-halo{fill:none;stroke:var(--or);stroke-width:1.5;stroke-dasharray:3 5}
-.sr-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
-.sr-steps span{display:flex;align-items:center;gap:5px;min-width:0;font-size:10px;color:var(--mut);line-height:1.25;overflow-wrap:anywhere}
-.sr-steps i{display:grid;place-items:center;font-style:normal;flex:none;width:19px;height:19px;border:1px solid var(--or);border-radius:50%;font-size:10px;background:var(--or);color:#fff}
-.sr-step{color:var(--ink)!important;font-weight:500}
 .sr-bottom{flex-wrap:wrap}.sr-bottom a{color:var(--ink);font-weight:600}.sr-bottom a:hover{color:var(--or)}
 @media(max-width:860px){.studio-showcase-split{grid-template-columns:minmax(0,1fr);gap:30px}.sr-scene-copy{min-height:98px}}
-@media(max-width:480px){.sr-stage{border-radius:20px;gap:12px}.sr-scene-copy h3{font-size:24px}.sr-scene-copy{min-height:104px}.sr-steps span{font-size:9px}.sr-bottom{font-size:10px}}
+@media(max-width:480px){.sr-stage{border-radius:20px;gap:12px}.sr-scene-copy h3{font-size:24px}.sr-scene-copy{min-height:104px}.sr-bottom{font-size:10px}}
 
 /* Native CSS animations share the scene clock. No per-frame React render. */
 .sr-core-halo{opacity:.7}
@@ -281,8 +277,6 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-core-halo{animation:sr-halo 1.8s ease-in-out var(--at,0s) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-bar{animation:sr-bar-rise .92s cubic-bezier(.2,.7,.2,1) var(--at,0s) both}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-chart-point{animation:sr-appear .48s ease 1.2s both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-step i{animation:sr-step-light .35s ease var(--at,0s) both}
-.sr-stage[data-reduced="false"] .sr-scene-active .sr-step{animation:sr-step-text .35s ease var(--at,0s) both}
 .sr-stage[data-running="false"] .sr-clock,.sr-stage[data-running="false"] .sr-scene-active *{animation-play-state:paused!important}
 @keyframes sr-wire-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:var(--end,0)}}
 @keyframes sr-node-light{from{stroke:var(--line)}to{stroke:var(--or)}}
@@ -290,8 +284,6 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 @keyframes sr-appear{from{opacity:0}to{opacity:1}}
 @keyframes sr-halo{0%{opacity:.2}48%{opacity:1}100%{opacity:.7}}
 @keyframes sr-bar-rise{from{transform:scaleY(.04)}to{transform:scaleY(1)}}
-@keyframes sr-step-light{from{background:transparent;border-color:var(--line);color:var(--mut)}to{background:var(--or);border-color:var(--or);color:#fff}}
-@keyframes sr-step-text{from{opacity:.55}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.sr-scene{transition:none;transform:none}.sr-stage .sr-scene *{animation:none!important}.sr-clock{animation:none!important}}
 
 
@@ -301,3 +293,25 @@ html.lutic-intro-active,html.lutic-intro-active body{overflow:hidden;overscroll-
 .sr-node-inactive .sr-node-dot{fill:var(--mut);opacity:.55}
 .sr-auto-outcome{font-family:Geist,system-ui,sans-serif;font-size:13px;font-weight:600;fill:var(--ink)}
 .sr-stage[data-reduced="false"] .sr-scene-active .sr-auto-decision{animation:sr-appear .45s ease var(--at,0s) both}
+
+/* Silent cinematic treatment: only native transform/opacity motion and SVG signal strokes. */
+.sr-film-camera{transform-box:view-box;transform-origin:center}
+.sr-film-signal{stroke:var(--or);stroke-width:4;stroke-dasharray:.075 1.15;stroke-dashoffset:.075;opacity:0;pointer-events:none}
+.sr-core-art{transform-box:fill-box;transform-origin:center}
+.sr-film-caption{display:flex;align-items:center;gap:9px;min-width:0;min-height:38px;padding:8px 0;color:var(--ink);border-top:1px solid var(--line)}
+.sr-film-caption-dot{flex:none;width:7px;height:7px;background:var(--or);border-radius:50%}
+.sr-film-caption-stack{display:grid;min-width:0;flex:1;align-items:center}
+.sr-film-caption-line{grid-area:1/1;opacity:0;font-size:12px;font-weight:500;line-height:1.45;overflow-wrap:anywhere}
+.sr-film-caption-final{opacity:1}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-camera{animation:sr-film-camera var(--scene-duration,5s) cubic-bezier(.2,.65,.2,1) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-signal{animation:sr-film-signal var(--signal-duration,.92s) linear var(--signal-at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-core-art{animation:sr-film-core 1.15s cubic-bezier(.2,.7,.2,1) var(--at,0s) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-caption-line{animation:sr-film-caption var(--beat-length) linear var(--beat-start) both}
+.sr-stage[data-reduced="false"] .sr-scene-active .sr-film-caption-final{animation:sr-film-caption-final var(--beat-length) ease var(--beat-start) both}
+@keyframes sr-film-camera{from{transform:scale(.975) translateY(2px)}to{transform:scale(1) translateY(0)}}
+@keyframes sr-film-signal{0%{opacity:0;stroke-dashoffset:.075}10%{opacity:1}88%{opacity:1}100%{opacity:0;stroke-dashoffset:-1}}
+@keyframes sr-film-core{0%,100%{transform:scale(1)}36%{transform:scale(1.07)}}
+@keyframes sr-film-caption{0%{opacity:0;transform:translateY(3px)}18%,85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-3px)}}
+@keyframes sr-film-caption-final{0%{opacity:0;transform:translateY(3px)}25%,100%{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.sr-film-caption-line{font-size:11px}.sr-film-caption{min-height:42px}}
+@media(prefers-reduced-motion:reduce){.sr-film-caption-line{opacity:0}.sr-film-caption-final{opacity:1}}

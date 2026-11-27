@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {memo,useEffect,useRef,useState} from "react";
-import {SCENES,SCENE_SECONDS,nextReelState,shouldRunReel,automationFlow} from "@/lib/studio-reel.mjs";
+import {SCENES,SCENE_SECONDS,nextReelState,shouldRunReel,automationFlow,filmBeats} from "@/lib/studio-reel.mjs";
 
 // Each diagram is rendered once. A single CSS clock coordinates the active
 // scene's wires, node highlights, chart bars and step captions.
@@ -14,22 +14,26 @@ function Node({x,y,w=142,h=64,label,detail,at=0,mark="dot",enabled=true}){
   {enabled&&mark==="check"&&<path d={"M"+(x+w-23)+" "+(y+43)+"l4 4 7 -8"} className="sr-check" style={{"--at":(at+.4)+"s"}}/>}
  </g>;
 }
+function Signal({d,at=0,duration=.92}){
+ return <path d={d} pathLength="1" fill="none" strokeLinecap="round" className="sr-film-signal" style={{"--signal-at":at+"s","--signal-duration":duration+"s"}}/>;
+}
 function Wire({d,at=0,partial=false}){
- return <g fill="none" strokeLinecap="round"><path d={d} className="sr-wire-base"/><path d={d} pathLength="1" strokeDasharray="1" strokeDashoffset={partial ? .1 : 0} style={{"--at":at+"s","--end":partial ? .1 : 0}} className="sr-wire-live"/></g>;
+ return <g fill="none" strokeLinecap="round"><path d={d} className="sr-wire-base"/><path d={d} pathLength="1" strokeDasharray="1" strokeDashoffset={partial ? .1 : 0} style={{"--at":at+"s","--end":partial ? .1 : 0}} className="sr-wire-live"/><Signal d={d} at={at}/></g>;
 }
 function Core({x=270,y=141,at=0}){
- return <g transform={"translate("+x+" "+y+")"}><circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/><g className="sr-core-art" transform="scale(.39) translate(-100 -100)"><polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/><circle cx="100" cy="100" r="52" fill="#101012"/><ellipse cx="82" cy="106" rx="6.5" ry="8.5" fill="#fff"/><ellipse cx="118" cy="97" rx="6.5" ry="8.5" fill="#fff"/></g></g>;
+ return <g transform={"translate("+x+" "+y+")"}><circle r="46" className="sr-core-halo" style={{"--at":at+"s"}}/><g transform="scale(.39) translate(-100 -100)"><g className="sr-core-art"><polygon points="156.4,120.5 110.4,159.1 54,138.6 43.6,79.5 89.6,40.9 146,61.4" fill="#ee5414" stroke="#ee5414" strokeWidth="34" strokeLinejoin="round"/><circle cx="100" cy="100" r="52" fill="#101012"/><ellipse cx="82" cy="106" rx="6.5" ry="8.5" fill="#fff"/><ellipse cx="118" cy="97" rx="6.5" ry="8.5" fill="#fff"/></g></g></g>;
 }
 function AutomationFlow({reviewRequired}){
  const nodes=automationFlow(reviewRequired);
  return <>
   <g fill="none" strokeLinecap="round" strokeLinejoin="round">
    {nodes.map(n=><path key={n.key+"-base"} d={n.d} className="sr-wire-base"/>)}
-   {nodes.filter(n=>n.enabled).map(n=><path key={n.key+"-live"} d={n.d} pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":n.wireAt+"s","--wire-duration":".58s"}} className="sr-wire-live"/>)}
+   {nodes.filter(n=>n.enabled).map(n=><g key={n.key+"-live"}><path d={n.d} pathLength="1" strokeDasharray="1" strokeDashoffset="0" style={{"--at":n.wireAt+"s","--wire-duration":".58s"}} className="sr-wire-live"/><Signal d={n.d} at={n.wireAt} duration={.58}/></g>)}
+   <Signal d="M270 137V73" at={2.46} duration={.40}/>
   </g>
-  <Core x={270} y={49} at={.25}/>
+  <Core x={270} y={49} at={.72}/>
   {nodes.map(n=><Node key={n.key} x={n.x} y={137} w={100} h={64} label={n.label} detail={n.detail} at={n.at} enabled={n.enabled} mark={n.key==="result"?"check":"dot"}/>)}
-  <g className="sr-auto-decision" style={{"--at":"2.48s"}}>
+  <g className="sr-auto-decision" style={{"--at":"3.78s"}}>
    <text x="270" y="232" textAnchor="middle" className="sr-auto-outcome">{reviewRequired?"Review required · awaiting approval":"No review required · result ready"}</text>
    <text x="270" y="250" textAnchor="middle" className="sr-caption">{reviewRequired?"Restricted actions wait for a human decision":"Permitted actions complete within policy"}</text>
   </g>
@@ -37,6 +41,7 @@ function AutomationFlow({reviewRequired}){
 }
 function Diagram({scene,reviewRequired}){
  return <svg className="sr-diagram" viewBox="0 0 540 282" role="img" aria-label={scene.key==="automation"?scene.description+(reviewRequired?" This example requires review.":" This example returns a result directly."):scene.description}>
+ <g className="sr-film-camera">
  {scene.key==="solutions"?<>
  <Wire d="M162 65H205Q220 65 220 80V102L235 120" at={0.18}/><Wire d="M162 217H205Q220 217 220 202V180L235 162" at={1.18}/><Wire d="M309 141H375" at={2.18}/>
  <Node x={20} y={33} label="Question" detail="Natural language" at={0.26}/><Node x={20} y={185} label="Knowledge" detail="Approved documents" at={1.26}/><Core at={1.18}/><Node x={375} y={108} w={145} h={74} label="AI answer" detail="Sources attached" at={2.35} mark="check"/>
@@ -57,14 +62,18 @@ function Diagram({scene,reviewRequired}){
  <circle cx="280" cy="131" r="6" fill="#ee5414" className="sr-chart-point"/><Wire d="M178 228H198" at={1.18}/><Wire d="M340 228H362" at={2.18}/>
  <Node x={20} y={196} w={158} label="Monitor" detail="Watch outcomes" at={0.26}/><Node x={198} y={196} label="Investigate" detail="Review traces" at={1.35}/><Node x={362} y={196} w={158} label="Improve" detail="Regression test" at={2.35} mark="check"/>
  </>}
+ </g>
  </svg>;
 }
 const Scene=memo(function Scene({scene,active,reviewRequired}){
- const steps=scene.key==="automation"?["Plan the task","Call tools for actions",reviewRequired?"Request human review":"Return the result"]:scene.steps;
+ const beats=filmBeats(scene.key,reviewRequired);
  return <div className={"sr-scene"+(active?" sr-scene-active":"")} aria-hidden={!active}>
   <div className="sr-scene-copy"><span className="sr-eyebrow">{scene.label}</span><h3>{scene.title}</h3><p>{scene.description}</p></div>
   <Diagram scene={scene} reviewRequired={reviewRequired}/>
-  <div className="sr-steps" aria-label="Workflow steps">{steps.map((label,i)=><span className="sr-step" key={label} style={{"--at":(.16+i*1.02)+"s"}}><i>{i+1}</i>{label}</span>)}</div>
+  <div className="sr-film-caption" aria-label={beats.map(b=>b.text).join(" ")}>
+   <span className="sr-film-caption-dot" aria-hidden="true"/>
+   <div className="sr-film-caption-stack" aria-hidden="true">{beats.map((beat,i)=><span key={beat.text} className={"sr-film-caption-line"+(i===beats.length-1?" sr-film-caption-final":"")} style={{"--beat-start":beat.start+"s","--beat-length":(beat.end-beat.start)+"s"}}>{beat.text}</span>)}</div>
+  </div>
  </div>;
 });
 export default function StudioReel(){
